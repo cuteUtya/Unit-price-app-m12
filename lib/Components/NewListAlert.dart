@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:unit_price/ItemsController.dart';
 
-class NewListAlert extends StatelessWidget {
+class NewListAlert extends StatefulWidget {
+  const NewListAlert({super.key});
+
   static void show(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return NewListAlert();
+        return const NewListAlert();
       },
     );
+  }
+
+  @override
+  State<StatefulWidget> createState() => NewListAlertState();
+}
+
+class NewListAlertState extends State<NewListAlert> {
+
+  TextEditingController controller = TextEditingController();
+  bool enterInvalid = false;
+
+  void add() {
+    var val = controller.value.text;
+
+    if(val.isEmpty) {
+      setState(() => enterInvalid = true);
+    } else {
+      ItemController.addList(name: val);
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -17,12 +40,15 @@ class NewListAlert extends StatelessWidget {
       title: const Text('New list'),
       content: SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children:  <Widget>[
             TextField(
               autofocus: true,
+              onTap: () => setState(() => enterInvalid = false),
+              controller: controller,
               decoration: InputDecoration(
                 labelText: 'Name',
-                border: OutlineInputBorder(),
+                errorText: enterInvalid ? 'Name can\'t be empty' : null,
+                border: const OutlineInputBorder(),
               ),
             )
           ],
@@ -38,7 +64,7 @@ class NewListAlert extends StatelessWidget {
         TextButton(
           child: const Text('Add'),
           onPressed: () {
-            Navigator.of(context).pop();
+            add();
           },
         ),
       ],
