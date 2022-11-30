@@ -1,5 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:unit_price/Components/EmptyCard.dart';
 import 'package:unit_price/ItemsController.dart';
 import 'package:unit_price/palette_controller.dart';
 
@@ -114,15 +115,8 @@ class ItemView extends StatelessWidget {
     return Dismissible(
       key: key,
       onDismissed: (_) => onDismiss(this),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(10),
-          ),
-        ),
+      child: EmptyCard(
+        cardColor: cardColor,
         child: Column(
           children: [
             buildLine(
