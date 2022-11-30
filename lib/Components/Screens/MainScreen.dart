@@ -59,33 +59,33 @@ class _MainScreenState extends State<MainScreen> {
 
     return Column(
       children: [
-        if(widget.displayedList != null)
-        Stack(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(
-                    widget.displayedList!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+        if (widget.displayedList != null)
+          Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      widget.displayedList!,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Positioned(
-              left: 0,
-              top: 0,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => widget.onCloseList(),
+                ],
               ),
-            )
-          ],
-        ),
+              Positioned(
+                left: 0,
+                top: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => widget.onCloseList(),
+                ),
+              )
+            ],
+          ),
         Expanded(
           child: ListView(
             children: [
@@ -95,6 +95,20 @@ class _MainScreenState extends State<MainScreen> {
                   item: i,
                   onDismiss: (h) => setState(
                     () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Item was deleted'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              ItemController.addItem(
+                                value: h.item,
+                                list: widget.displayedList,
+                              );
+                            },
+                          ),
+                        ),
+                      );
                       ItemController.removeItem(
                         value: h.item,
                         list: widget.displayedList,
