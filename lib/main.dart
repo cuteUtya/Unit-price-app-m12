@@ -72,9 +72,13 @@ class MyHomePageState extends State<MyHomePage> {
             direction: Axis.vertical,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              FloatingActionButton.small(
-                onPressed: () => NewListAlert.show(context),
-                child: const Icon(Icons.playlist_add),
+              AnimatedOpacity(
+                opacity: ItemController.currentList == null ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: FloatingActionButton.small(
+                  onPressed: () => NewListAlert.show(context),
+                  child: const Icon(Icons.playlist_add),
+                ),
               ),
               const SizedBox(height: 6),
               FloatingActionButton(
