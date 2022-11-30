@@ -59,6 +59,7 @@ class MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.only(right: 6),
         child: FloatingActionButton.small(
           onPressed: () {
+
             undoDeletingStack.last.call();
             setState(() => undoDeletingStack.removeLast());
           },
@@ -118,9 +119,9 @@ class MyHomePageState extends State<MyHomePage> {
           Positioned(
             right: 0,
             bottom: 0,
-            child: buildUndoButton(
-              currentPageIndex == 1 && undoDeletingStack.isNotEmpty,
-            ),
+            child: currentPageIndex == 1 && undoDeletingStack.isNotEmpty ? buildUndoButton(
+              true,
+            ) : Container(),
           )
         ],
       ),
