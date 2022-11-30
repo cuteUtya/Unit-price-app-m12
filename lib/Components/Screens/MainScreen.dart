@@ -1,9 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:unit_price/Components/ItemView.dart';
 import 'package:unit_price/ItemsController.dart';
+import 'package:unit_price/palette_controller.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({
+    Key? key,
+    required this.displayedList,
+    required this.onCloseList,
+  }) : super(key: key);
+
+  final String? displayedList;
+  final Function onCloseList;
+
   @override
   State<StatefulWidget> createState() => _MainScreenState();
 }
@@ -11,25 +21,84 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
+    if (widget.displayedList == null) {
+      return StreamBuilder(
+        stream: ItemController.mainScreenItems,
+        builder: (_, data) {
+          if (data.data != null) {
+            var items = data.data!;
+            return _build(items);
+          }
+
+          return Container();
+        },
+      );
+    }
+
     return StreamBuilder(
-      stream: ItemController.mainScreenItems,
+      stream: ItemController.lists,
       builder: (_, data) {
         if (data.data != null) {
-          var items = data.data!;
-          var bestItem = findBestSell(items);
-          var bestItemPrice =
-              bestItem == null ? null : getPricePerKilogram(bestItem);
+          return _build(
+            data.data!
+                    .firstWhere(
+                      (element) => element.name == widget.displayedList,
+                    )
+                    .items ??
+                [],
+          );
+        }
+        return Container();
+      },
+    );
+  }
 
-          return ListView(
+  Widget _build(List<Item> items) {
+    var bestItem = findBestSell(items);
+    var bestItemPrice = bestItem == null ? null : getPricePerKilogram(bestItem);
+
+    return Column(
+      children: [
+        if(widget.displayedList != null)
+        Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Text(
+                    widget.displayedList!,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              left: 0,
+              top: 0,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => widget.onCloseList(),
+              ),
+            )
+          ],
+        ),
+        Expanded(
+          child: ListView(
             children: [
               for (var i in items)
                 ItemView(
-                  key:
-                      UniqueKey(), //Key('$updateIteration + ${items.indexOf(i).toString()}'),
+                  key: UniqueKey(),
                   item: i,
                   onDismiss: (h) => setState(
                     () {
-                      ItemController.removeItem(value: h.item);
+                      ItemController.removeItem(
+                        value: h.item,
+                        list: widget.displayedList,
+                      );
                     },
                   ),
                   meta: ItemCalculationResult(
@@ -40,11 +109,9 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 )
             ],
-          );
-        }
-
-        return Container();
-      },
+          ),
+        ),
+      ],
     );
   }
 

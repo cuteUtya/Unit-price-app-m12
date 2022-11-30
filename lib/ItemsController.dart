@@ -4,6 +4,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemController {
+  static String? currentList;
+
   static final BehaviorSubject<List<Item>> _mainScreenItems = BehaviorSubject();
   static Stream<List<Item>> get mainScreenItems => _mainScreenItems.stream;
   static  List<Item> _mainScreenValue = [];

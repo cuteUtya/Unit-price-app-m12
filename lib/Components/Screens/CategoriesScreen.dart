@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:unit_price/Components/EmptyCard.dart';
 import 'package:unit_price/Components/listItemView.dart';
 import 'package:unit_price/ItemsController.dart';
-import 'package:unit_price/palette_controller.dart';
 
 class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({super.key});
+  const CategoriesScreen({
+    super.key,
+    required this.onCategoryOpen,
+  });
+
+  final Function(String) onCategoryOpen;
 
   @override
   State<StatefulWidget> createState() => _CategoriesScreenState();
@@ -25,7 +28,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             children: [
               for (var l in lists)
                 ListItemView(
-                  onTap: () => print('bebra'),
+                  onTap: (item) => widget.onCategoryOpen(item.item.name!),
                   item: l,
                   onDismiss: (i) => ItemController.deleteList(
                     list: i.item.name,

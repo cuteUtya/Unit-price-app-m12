@@ -9,12 +9,12 @@ class ListItemView extends StatelessWidget {
     super.key,
     required this.item,
     required this.onDismiss,
-    this.onTap,
+    required this.onTap,
   });
 
   final ItemList item;
   final Function(ListItemView) onDismiss;
-  final Function? onTap;
+  final Function(ListItemView) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class ListItemView extends StatelessWidget {
       key: UniqueKey(),
       onDismissed: (_) => onDismiss(this),
       child: EmptyCard(
-        onTap: onTap,
+        onTap: () => onTap(this),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

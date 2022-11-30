@@ -21,6 +21,10 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom],
+    );
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         return MaterialApp(
@@ -43,25 +47,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  int currentPageIndex = 0;
+  int currentPageIndex = 2;
+
+  String? openedCategoryName;
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.bottom],
-    );
-
     const duration = Duration(milliseconds: 250);
+
     return Scaffold(
       floatingActionButton: AnimatedOpacity(
         duration: duration,
-        opacity: currentPageIndex != 0 ? 0 : 1,
+        opacity: currentPageIndex != 2 ? 0 : 1,
         child: AnimatedContainer(
           duration: duration,
           transform: Matrix4.translation(
             vector.Vector3(
-              currentPageIndex != 0 ? 100 : 0,
+              currentPageIndex != 2 ? 100 : 0,
               0,
               0,
             ),
@@ -91,10 +93,6 @@ class MyHomePageState extends State<MyHomePage> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
@@ -102,18 +100,36 @@ class MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.category),
             label: 'Categories',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
         ],
       ),
       body: ColoredBox(
         color: Theme.of(context).colorScheme.background,
         child: Center(
           child: <Widget>[
-            const MainScreen(),
             Container(
               alignment: Alignment.center,
               child: const Text('Page 3'),
             ),
-            const CategoriesScreen(),
+            CategoriesScreen(
+              onCategoryOpen: (name) => {
+                setState(
+                  () {
+                    currentPageIndex = 2;
+                    ItemController.currentList = name;
+                  },
+                )
+              },
+            ),
+            MainScreen(
+              displayedList: ItemController.currentList,
+              onCloseList: () => setState(
+                () => ItemController.currentList = null,
+              ),
+            ),
           ][currentPageIndex],
         ),
       ),

@@ -29,7 +29,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
   void clearError() {
     weightError = false;
     priceError = false;
-    setState(()=>{});
+    setState(() => {});
   }
 
   void addValue(BuildContext context) {
@@ -39,6 +39,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
     if (price != null && weight != null && weight > 0 && price > 0) {
       ItemController.addItem(
         value: Item(weight: weight, price: price),
+        list: ItemController.currentList,
       );
       Navigator.of(context).pop();
     } else {
@@ -82,7 +83,8 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           onTap: () => clearError(),
                           controller: _widthEnterController,
                           keyboardType: TextInputType.number,
-                          onSubmitted: (_) => FocusScope.of(context).requestFocus(priceFocus),
+                          onSubmitted: (_) =>
+                              FocusScope.of(context).requestFocus(priceFocus),
                           decoration: InputDecoration(
                             labelText: 'Weigh',
                             border: const OutlineInputBorder(),
