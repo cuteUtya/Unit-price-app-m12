@@ -9,10 +9,12 @@ class MainScreen extends StatefulWidget {
     Key? key,
     required this.displayedList,
     required this.onCloseList,
+    required this.onItemDelete,
   }) : super(key: key);
 
   final String? displayedList;
   final Function onCloseList;
+  final Function(Function) onItemDelete;
 
   @override
   State<StatefulWidget> createState() => _MainScreenState();
@@ -95,18 +97,12 @@ class _MainScreenState extends State<MainScreen> {
                   item: i,
                   onDismiss: (h) => setState(
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Item was deleted'),
-                          action: SnackBarAction(
-                            label: 'Undo',
-                            onPressed: () {
-                              ItemController.addItem(
-                                value: h.item,
-                                list: widget.displayedList,
-                              );
-                            },
-                          ),
+                      var index = items.indexOf(i);
+                      widget.onItemDelete(
+                        () => ItemController.addItem(
+                          value: h.item,
+                          list: widget.displayedList,
+                          position: index,
                         ),
                       );
                       ItemController.removeItem(

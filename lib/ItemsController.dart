@@ -8,7 +8,7 @@ class ItemController {
 
   static final BehaviorSubject<List<Item>> _mainScreenItems = BehaviorSubject();
   static Stream<List<Item>> get mainScreenItems => _mainScreenItems.stream;
-  static  List<Item> _mainScreenValue = [];
+  static List<Item> _mainScreenValue = [];
 
   static final BehaviorSubject<List<ItemList>> _lists = BehaviorSubject();
   static Stream<List<ItemList>> get lists => _lists.stream;
@@ -55,14 +55,14 @@ class ItemController {
     _forceUpdateLists();
   }
 
-  static void addItem({String? list, required Item value}) {
+  static void addItem({String? list, required Item value, int? position}) {
     if (list == null) {
-      _mainScreenValue.add(value);
+      position == null ? _mainScreenValue.add(value) : _mainScreenValue.insert(position, value);
       _forceUpdateMainItemsList();
     } else {
       var listValue = getListByName(list);
       if (listValue != null) {
-        listValue.items?.add(value);
+        position == null ? listValue.items?.add(value) : listValue.items?.insert(position, value);
         _forceUpdateLists();
       }
     }

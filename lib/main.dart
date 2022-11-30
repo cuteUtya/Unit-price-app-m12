@@ -48,8 +48,8 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 2;
-
   String? openedCategoryName;
+  List<Function> undoDeletingStack = [];
 
   @override
   Widget build(BuildContext context) {
@@ -69,22 +69,41 @@ class MyHomePageState extends State<MyHomePage> {
             ),
           ),
           child: Wrap(
-            direction: Axis.vertical,
-            crossAxisAlignment: WrapCrossAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               AnimatedOpacity(
-                opacity: ItemController.currentList == null ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: FloatingActionButton.small(
-                  onPressed: () => NewListAlert.show(context),
-                  child: const Icon(Icons.playlist_add),
+                opacity: undoDeletingStack.isNotEmpty ? 1 : 0,
+                duration: const Duration(milliseconds: 250),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: FloatingActionButton.small(
+                    onPressed: () {
+                      undoDeletingStack.last.call();
+                      setState(() => undoDeletingStack.removeLast());
+                    },
+                    child: const Icon(Icons.undo),
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
-              FloatingActionButton(
-                onPressed: () => NewObjectScreen.show(context),
-                child: const Icon(Icons.add),
-                //icon: Icons.add,
+              Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  AnimatedOpacity(
+                    opacity: ItemController.currentList == null ? 1 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: FloatingActionButton.small(
+                      onPressed: () => NewListAlert.show(context),
+                      child: const Icon(Icons.playlist_add),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  FloatingActionButton(
+                    onPressed: () => NewObjectScreen.show(context),
+                    child: const Icon(Icons.add),
+                    //icon: Icons.add,
+                  ),
+                ],
               ),
             ],
           ),
@@ -133,9 +152,20 @@ class MyHomePageState extends State<MyHomePage> {
               onCloseList: () => setState(
                 () => ItemController.currentList = null,
               ),
+              onItemDelete: onItemDelete,
             ),
           ][currentPageIndex],
         ),
+      ),
+    );
+  }
+
+  void onItemDelete(Function prevent) {
+    setState(() => undoDeletingStack.add(prevent));
+    Future.delayed(
+      const Duration(seconds: 3),
+      () => setState(
+        () => undoDeletingStack.remove(prevent),
       ),
     );
   }
