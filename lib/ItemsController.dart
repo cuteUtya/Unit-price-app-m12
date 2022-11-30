@@ -1,21 +1,46 @@
+import 'dart:convert';
+
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemController {
   static final BehaviorSubject<List<Item>> _mainScreenItems = BehaviorSubject();
   static Stream<List<Item>> get mainScreenItems => _mainScreenItems.stream;
-  static final List<Item> _mainScreenValue = [];
+  static  List<Item> _mainScreenValue = [];
 
   static final BehaviorSubject<List<ItemList>> _lists = BehaviorSubject();
   static Stream<List<ItemList>> get lists => _lists.stream;
-  static final List<ItemList> _listsValue = [];
+  static  List<ItemList> _listsValue = [];
 
-  Future load() async {
-    //TODO load lists
+  static Future load() async {
+    final prefs = await SharedPreferences.getInstance();
+    var jsonV = prefs.getString('data');
+
+    if (jsonV?.isNotEmpty ?? false) {
+      var dataObject = _AppData.fromJson(json.decode(jsonV!));
+      _listsValue = dataObject.lists ?? [];
+      _mainScreenValue = dataObject.mainScreenItems ?? [];
+      _forceUpdateLists();
+      _forceUpdateMainItemsList();
+    }
+  }
+
+  static Future save() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+      'data',
+      json.encode(
+        _AppData(
+          mainScreenItems: _mainScreenValue,
+          lists: _listsValue,
+        ),
+      ),
+    );
   }
 
   static ItemList? getListByName(String name) {
-    for(var i in _listsValue) {
-      if(i.name == name) return i;
+    for (var i in _listsValue) {
+      if (i.name == name) return i;
     }
     return null;
   }
@@ -26,56 +51,136 @@ class ItemController {
   }
 
   static void addItem({String? list, required Item value}) {
-    if(list == null) {
+    if (list == null) {
       _mainScreenValue.add(value);
       _forceUpdateMainItemsList();
     } else {
       var listValue = getListByName(list);
-      if(listValue != null) {
-        listValue.items.add(value);
+      if (listValue != null) {
+        listValue.items?.add(value);
         _forceUpdateLists();
       }
     }
   }
 
-  static void removeItem({String? list, required Item value}){
-    if(list == null) {
+  static void removeItem({String? list, required Item value}) {
+    if (list == null) {
       _mainScreenValue.remove(value);
       _forceUpdateMainItemsList();
     } else {
       var listValue = getListByName(list);
-      if(listValue != null) {
-        listValue.items.remove(value);
+      if (listValue != null) {
+        listValue.items?.remove(value);
         _forceUpdateLists();
       }
     }
   }
 
-  static void deleteList({String? list}){
-    if(list == null) {
+  static void deleteList({String? list}) {
+    if (list == null) {
       _mainScreenValue.clear();
       _forceUpdateMainItemsList();
     } else {
       var l = getListByName(list);
-      if(l != null) {
+      if (l != null) {
         _listsValue.remove(l);
         _forceUpdateLists();
       }
     }
   }
 
-  static void _forceUpdateMainItemsList() => _mainScreenItems.add(_mainScreenValue);
-  static void _forceUpdateLists() => _lists.add(_listsValue);
+  static void _forceUpdateMainItemsList() {
+    _mainScreenItems.add(_mainScreenValue);
+    save();
+  }
+  static void _forceUpdateLists() {
+    _lists.add(_listsValue);
+    save();
+  }
 }
 
 class Item {
-  const Item({required this.weight, required this.price,});
-  final double weight;
-  final double price;
+  Item({
+    required this.weight,
+    required this.price,
+  });
+  double? weight;
+  double? price;
+
+  Item.fromJson(Map<String, dynamic> json) {
+    weight = json['weight'];
+    price = json['price'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['weight'] = weight;
+    data['price'] = price;
+    return data;
+  }
 }
 
 class ItemList {
-  const ItemList({required this.items, required this.name,});
-  final List<Item> items;
-  final String name;
+  ItemList({
+    required this.items,
+    required this.name,
+  });
+  List<Item>? items = [];
+  String? name;
+
+  ItemList.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    if (json['items'] != null) {
+      items = <Item>[];
+      json['items'].forEach((v) {
+        items!.add(Item.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['name'] = name;
+    if (items != null) {
+      data['items'] = items!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class _AppData {
+  _AppData({
+    required this.mainScreenItems,
+    required this.lists,
+  });
+  List<Item>? mainScreenItems;
+  List<ItemList>? lists;
+
+  _AppData.fromJson(Map<String, dynamic> json) {
+    if (json['mainScreenItems'] != null) {
+      mainScreenItems = <Item>[];
+      json['mainScreenItems'].forEach((v) {
+        mainScreenItems!.add(Item.fromJson(v));
+      });
+    }
+    if (json['lists'] != null) {
+      lists = <ItemList>[];
+      json['lists'].forEach((v) {
+        lists!.add(ItemList.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+
+    if (mainScreenItems != null) {
+      data['mainScreenItems'] =
+          mainScreenItems!.map((v) => v.toJson()).toList();
+    }
+    if (lists != null) {
+      data['lists'] = lists!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
 }

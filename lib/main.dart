@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/Components/NewObjectScreen.dart';
 import 'package:unit_price/Components/Screens/MainScreen.dart';
+import 'package:unit_price/ItemsController.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  ItemController.load().then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
