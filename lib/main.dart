@@ -51,63 +51,78 @@ class MyHomePageState extends State<MyHomePage> {
   String? openedCategoryName;
   List<Function> undoDeletingStack = [];
 
+  Widget buildUndoButton(bool transparent) {
+    return AnimatedOpacity(
+      opacity: transparent ? 1 : 0,
+      duration: const Duration(milliseconds: 250),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 6),
+        child: FloatingActionButton.small(
+          onPressed: () {
+            undoDeletingStack.last.call();
+            setState(() => undoDeletingStack.removeLast());
+          },
+          child: const Icon(Icons.undo),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const duration = Duration(milliseconds: 250);
 
     return Scaffold(
-      floatingActionButton: AnimatedOpacity(
-        duration: duration,
-        opacity: currentPageIndex != 2 ? 0 : 1,
-        child: AnimatedContainer(
-          duration: duration,
-          transform: Matrix4.translation(
-            vector.Vector3(
-              currentPageIndex != 2 ? 100 : 0,
-              0,
-              0,
-            ),
-          ),
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.end,
-            children: [
-              AnimatedOpacity(
-                opacity: undoDeletingStack.isNotEmpty ? 1 : 0,
-                duration: const Duration(milliseconds: 250),
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: FloatingActionButton.small(
-                    onPressed: () {
-                      undoDeletingStack.last.call();
-                      setState(() => undoDeletingStack.removeLast());
-                    },
-                    child: const Icon(Icons.undo),
-                  ),
+      floatingActionButton: Stack(
+        children: [
+          AnimatedOpacity(
+            duration: duration,
+            opacity: currentPageIndex != 2 ? 0 : 1,
+            child: AnimatedContainer(
+              duration: duration,
+              transform: Matrix4.translation(
+                vector.Vector3(
+                  currentPageIndex != 2 ? 100 : 0,
+                  0,
+                  0,
                 ),
               ),
-              Wrap(
-                direction: Axis.vertical,
-                crossAxisAlignment: WrapCrossAlignment.center,
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
                 children: [
-                  AnimatedOpacity(
-                    opacity: ItemController.currentList == null ? 1 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: FloatingActionButton.small(
-                      onPressed: () => NewListAlert.show(context),
-                      child: const Icon(Icons.playlist_add),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  FloatingActionButton(
-                    onPressed: () => NewObjectScreen.show(context),
-                    child: const Icon(Icons.add),
-                    //icon: Icons.add,
+                  buildUndoButton(undoDeletingStack.isNotEmpty),
+                  Wrap(
+                    direction: Axis.vertical,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      AnimatedOpacity(
+                        opacity: ItemController.currentList == null ? 1 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: FloatingActionButton.small(
+                          onPressed: () => NewListAlert.show(context),
+                          child: const Icon(Icons.playlist_add),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      FloatingActionButton(
+                        onPressed: () => NewObjectScreen.show(context),
+                        child: const Icon(Icons.add),
+                        //icon: Icons.add,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: buildUndoButton(
+              currentPageIndex == 1 && undoDeletingStack.isNotEmpty,
+            ),
+          )
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (index) => setState(
@@ -138,6 +153,7 @@ class MyHomePageState extends State<MyHomePage> {
               child: const Text('Page 3'),
             ),
             CategoriesScreen(
+              onListDelete: (i) => onItemDelete(i),
               onCategoryOpen: (name) => {
                 setState(
                   () {

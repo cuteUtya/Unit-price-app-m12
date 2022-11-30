@@ -47,8 +47,9 @@ class ItemController {
     return null;
   }
 
-  static void addList({required String name, List<Item>? items}) {
-    _listsValue.add(ItemList(items: items ?? _mainScreenValue, name: name));
+  static void addList({required String name, List<Item>? items, int? position}) {
+    var value = ItemList(items: items ?? _mainScreenValue, name: name);
+    position == null ? _listsValue.add(value) : _listsValue.insert(position!, value);
     if(items == null) {
       ItemController.deleteList();
     }
