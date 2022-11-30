@@ -2,20 +2,35 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unit_price/ItemsController.dart';
 
-class NewObjectScreen extends StatelessWidget {
-  NewObjectScreen({Key? key}) : super(key: key);
+class NewObjectScreen extends StatefulWidget {
+  const NewObjectScreen({Key? key}) : super(key: key);
 
   static void show(BuildContext context) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return NewObjectScreen();
+        return const NewObjectScreen();
       },
     );
   }
 
+  @override
+  State<StatefulWidget> createState() => _NewObjectScreenState();
+}
+
+class _NewObjectScreenState extends State<NewObjectScreen> {
   final TextEditingController _widthEnterController = TextEditingController();
   final TextEditingController _priceEnterController = TextEditingController();
+  final FocusNode priceFocus = FocusNode();
+
+  bool weightError = false;
+  bool priceError = false;
+
+  void clearError() {
+    weightError = false;
+    priceError = false;
+    setState(()=>{});
+  }
 
   void addValue(BuildContext context) {
     var weight = double.tryParse(_widthEnterController.value.text);
@@ -27,7 +42,10 @@ class NewObjectScreen extends StatelessWidget {
       );
       Navigator.of(context).pop();
     } else {
-      //TODO force exception in inputs
+      print('error');
+      if (weight == null) weightError = true;
+      if (price == null) priceError = true;
+      setState(() => {});
     }
   }
 
@@ -62,11 +80,14 @@ class NewObjectScreen extends StatelessWidget {
                         width: inputWidth,
                         child: TextField(
                           autofocus: true,
+                          onTap: () => clearError(),
                           controller: _widthEnterController,
                           keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
+                          onSubmitted: (_) => FocusScope.of(context).requestFocus(priceFocus),
+                          decoration: InputDecoration(
                             labelText: 'Weigh',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            errorText: weightError ? 'invalid' : null,
                           ),
                         ),
                       ),
@@ -75,9 +96,12 @@ class NewObjectScreen extends StatelessWidget {
                         child: TextField(
                           controller: _priceEnterController,
                           keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
+                          onTap: () => clearError(),
+                          focusNode: priceFocus,
+                          decoration: InputDecoration(
                             labelText: 'Price',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            errorText: priceError ? 'invalid' : null,
                           ),
                           onSubmitted: (_) => addValue(context),
                         ),
