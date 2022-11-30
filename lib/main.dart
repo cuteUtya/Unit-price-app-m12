@@ -5,11 +5,15 @@ import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/Components/NewObjectScreen.dart';
 import 'package:unit_price/Components/Screens/MainScreen.dart';
 import 'package:unit_price/ItemsController.dart';
+import 'package:unit_price/palette_controller.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ItemController.load().then((value) => runApp(const MyApp()));
+  await ItemController.load();
+  await PaletteController.load();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

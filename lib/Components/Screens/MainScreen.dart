@@ -19,18 +19,27 @@ class _MainScreenState extends State<MainScreen> {
         if (data.data != null) {
           var items = data.data!;
           var bestItem = findBestSell(items);
-          var bestItemPrice = getPricePerKilogram(bestItem);
+          var bestItemPrice =
+              bestItem == null ? null : getPricePerKilogram(bestItem);
 
           return ListView(
             children: [
               for (var i in items)
                 ItemView(
-                  key: Key('$updateIteration + ${items.indexOf(i).toString()}'),
+                  key:
+                      UniqueKey(), //Key('$updateIteration + ${items.indexOf(i).toString()}'),
                   item: i,
+                  onDismiss: (h) => setState(
+                    () {
+                      updateIteration++;
+                      ItemController.removeItem(value: h.item);
+                    },
+                  ),
                   meta: ItemCalculationResult(
                     isBest: bestItem == i,
                     pricePerKilogram: getPricePerKilogram(i),
-                    percent: (getPricePerKilogram(i) / bestItemPrice * 100).toInt() ,
+                    percent:
+                        (getPricePerKilogram(i) / bestItemPrice! * 100).toInt(),
                   ),
                 )
             ],
@@ -46,7 +55,9 @@ class _MainScreenState extends State<MainScreen> {
     return ((1000 / item.weight!) * item.price!);
   }
 
-  Item findBestSell(List<Item> items) {
+  Item? findBestSell(List<Item> items) {
+    if (items.isEmpty) return null;
+
     Item best = items.first;
 
     for (var item in items) {
@@ -57,6 +68,4 @@ class _MainScreenState extends State<MainScreen> {
 
     return best;
   }
-
-  //((1000 / item.weight) * item.price).toStringAsFixed(2)
 }
