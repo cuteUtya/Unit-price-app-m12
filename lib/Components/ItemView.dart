@@ -103,7 +103,7 @@ class ItemView extends StatelessWidget {
                 value,
                 style: fontStyle,
               ),
-            )
+            ),
           ],
         ),
       );

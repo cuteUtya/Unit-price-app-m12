@@ -140,7 +140,9 @@ class _MainScreenState extends State<MainScreen> {
                     percent:
                         (getPricePerKilogram(i) / bestItemPrice! * 100).toInt(),
                   ),
-                )
+                ),
+              //whitespace in the bottom
+              SizedBox(height: 100)
             ],
           ),
         ),
