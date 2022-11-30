@@ -46,7 +46,10 @@ class ItemController {
   }
 
   static void addList({required String name, List<Item>? items}) {
-    _listsValue.add(ItemList(items: items ?? (<Item>[]), name: name));
+    _listsValue.add(ItemList(items: items ?? _mainScreenValue, name: name));
+    if(items == null) {
+      ItemController.deleteList();
+    }
     _forceUpdateLists();
   }
 
@@ -78,7 +81,7 @@ class ItemController {
 
   static void deleteList({String? list}) {
     if (list == null) {
-      _mainScreenValue.clear();
+      _mainScreenValue = [];
       _forceUpdateMainItemsList();
     } else {
       var l = getListByName(list);
