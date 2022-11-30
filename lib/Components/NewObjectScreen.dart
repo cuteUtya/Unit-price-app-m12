@@ -37,8 +37,8 @@ class NewObjectScreen extends StatefulWidget {
 }
 
 class _NewObjectScreenState extends State<NewObjectScreen> {
-  late TextEditingController _widthEnterController;
-  late TextEditingController _priceEnterController;
+   late final TextEditingController _widthEnterController = TextEditingController(text: widget.weight == null ? null : formatNumber(widget.weight!));
+   late final TextEditingController _priceEnterController = TextEditingController(text: widget.price == null ? null : formatNumber(widget.price!));
   final FocusNode priceFocus = FocusNode();
 
   bool weightError = false;
@@ -48,19 +48,6 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
     weightError = false;
     priceError = false;
     setState(() => {});
-  }
-
-  @override
-  void initState() {
-    if(widget.weight != null) {
-      _widthEnterController =
-          TextEditingController(text: formatNumber(widget.weight!));
-    }
-    if(widget.price != null) {
-      _priceEnterController =
-          TextEditingController(text: formatNumber(widget.price!));
-    }
-    super.initState();
   }
 
   void addValue(BuildContext context) {
