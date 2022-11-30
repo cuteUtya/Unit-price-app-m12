@@ -33,7 +33,12 @@ class EmptyCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(
               horizontal: 12 - (onTap == null ? 0 : 8), vertical: 11),
-          child: Row(children: [child]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(child: child),
+            ],
+          ),
         ),
       );
     }

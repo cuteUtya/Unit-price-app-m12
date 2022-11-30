@@ -26,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.displayedList == null) {
+      print('hold update');
       return StreamBuilder(
         stream: ItemController.mainScreenItems,
         builder: (_, data) {
@@ -118,6 +119,7 @@ class _MainScreenState extends State<MainScreen> {
                 ItemView(
                   key: UniqueKey(),
                   item: i,
+                  listName: overrideName ?? widget.displayedList,
                   onDismiss: (h) => setState(
                     () {
                       var index = items.indexOf(i);
@@ -142,7 +144,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
               //whitespace in the bottom
-              SizedBox(height: 100)
+              const SizedBox(height: 100)
             ],
           ),
         ),

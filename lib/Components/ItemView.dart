@@ -1,18 +1,22 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:unit_price/Components/EmptyCard.dart';
+import 'package:unit_price/Components/NewObjectScreen.dart';
 import 'package:unit_price/ItemsController.dart';
+import 'package:unit_price/numberFormatter.dart';
 import 'package:unit_price/palette_controller.dart';
 
 class ItemView extends StatelessWidget {
   const ItemView({
     required this.key,
     required this.item,
+    required this.listName,
     required this.meta,
     required this.onDismiss,
   }) : super(key: key);
 
   final Item item;
+  final String? listName;
   final Key key;
   final ItemCalculationResult meta;
   final Function(ItemView) onDismiss;
@@ -117,6 +121,15 @@ class ItemView extends StatelessWidget {
       onDismissed: (_) => onDismiss(this),
       child: EmptyCard(
         cardColor: cardColor,
+        onTap: () => NewObjectScreen.show(
+          context,
+          onComplete: (d1, d2) => {
+            ItemController.replaceItem(oldItem: item, newItem: Item(weight: d1, price: d2), list: listName,)
+          },
+          weight: item.weight,
+          price: item.price,
+          isEdit: true,
+        ),
         child: Column(
           children: [
             buildLine(
@@ -144,9 +157,7 @@ class ItemView extends StatelessWidget {
     );
   }
 
-  String formatNumber(double value) {
-    return value.toStringAsFixed(2).replaceAll('.00', '').replaceAll(',00', '');
-  }
+
 }
 
 class ItemCalculationResult {

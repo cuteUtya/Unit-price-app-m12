@@ -12,7 +12,7 @@ class ItemController {
 
   static final BehaviorSubject<List<ItemList>> _lists = BehaviorSubject();
   static Stream<List<ItemList>> get lists => _lists.stream;
-  static  List<ItemList> _listsValue = [];
+  static List<ItemList> _listsValue = [];
 
   static Future load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -47,10 +47,27 @@ class ItemController {
     return null;
   }
 
-  static void addList({required String name, List<Item>? items, int? position}) {
+  static void replaceItem(
+      {required Item oldItem, required Item newItem, String? list}) {
+    List<Item>? arr =
+        list == null ? _mainScreenValue : getListByName(list!)?.items;
+
+    if (arr != null) {
+      var i = arr.indexOf(oldItem);
+      arr.remove(oldItem);
+      arr.insert(i, newItem);
+    }
+
+    list == null ? _forceUpdateMainItemsList() : _forceUpdateLists() ;
+  }
+
+  static void addList(
+      {required String name, List<Item>? items, int? position}) {
     var value = ItemList(items: items ?? _mainScreenValue, name: name);
-    position == null ? _listsValue.add(value) : _listsValue.insert(position!, value);
-    if(items == null) {
+    position == null
+        ? _listsValue.add(value)
+        : _listsValue.insert(position!, value);
+    if (items == null) {
       ItemController.deleteList();
     }
     _forceUpdateLists();
@@ -63,12 +80,16 @@ class ItemController {
 
   static void addItem({String? list, required Item value, int? position}) {
     if (list == null) {
-      position == null ? _mainScreenValue.add(value) : _mainScreenValue.insert(position, value);
+      position == null
+          ? _mainScreenValue.add(value)
+          : _mainScreenValue.insert(position, value);
       _forceUpdateMainItemsList();
     } else {
       var listValue = getListByName(list);
       if (listValue != null) {
-        position == null ? listValue.items?.add(value) : listValue.items?.insert(position, value);
+        position == null
+            ? listValue.items?.add(value)
+            : listValue.items?.insert(position, value);
         _forceUpdateLists();
       }
     }
@@ -104,6 +125,7 @@ class ItemController {
     _mainScreenItems.add(_mainScreenValue);
     save();
   }
+
   static void _forceUpdateLists() {
     _lists.add(_listsValue);
     save();

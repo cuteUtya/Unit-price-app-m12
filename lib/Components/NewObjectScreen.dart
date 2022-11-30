@@ -1,15 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unit_price/ItemsController.dart';
+import 'package:unit_price/numberFormatter.dart';
 
 class NewObjectScreen extends StatefulWidget {
-  const NewObjectScreen({Key? key}) : super(key: key);
+  const NewObjectScreen({
+    Key? key,
+    this.onComplete,
+    this.isEdit = false,
+    this.price,
+    this.weight,
+  }) : super(key: key);
 
-  static void show(BuildContext context) {
+  final Function(double, double)? onComplete;
+  final bool isEdit;
+  final double? weight;
+  final double? price;
+
+  static void show(BuildContext context,
+      {bool isEdit = false, Function(double, double)? onComplete, double? weight, double? price}) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return const NewObjectScreen();
+        return NewObjectScreen(
+          isEdit: isEdit,
+          onComplete: onComplete,
+          weight: weight,
+          price: price,
+        );
       },
     );
   }
@@ -19,8 +37,8 @@ class NewObjectScreen extends StatefulWidget {
 }
 
 class _NewObjectScreenState extends State<NewObjectScreen> {
-  final TextEditingController _widthEnterController = TextEditingController();
-  final TextEditingController _priceEnterController = TextEditingController();
+  late TextEditingController _widthEnterController;
+  late TextEditingController _priceEnterController;
   final FocusNode priceFocus = FocusNode();
 
   bool weightError = false;
@@ -32,15 +50,34 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
     setState(() => {});
   }
 
+  @override
+  void initState() {
+    if(widget.weight != null) {
+      _widthEnterController =
+          TextEditingController(text: formatNumber(widget.weight!));
+    }
+    if(widget.price != null) {
+      _priceEnterController =
+          TextEditingController(text: formatNumber(widget.price!));
+    }
+    super.initState();
+  }
+
   void addValue(BuildContext context) {
     var weight = double.tryParse(_widthEnterController.value.text);
     var price = double.tryParse(_priceEnterController.value.text);
 
     if (price != null && weight != null && weight > 0 && price > 0) {
-      ItemController.addItem(
-        value: Item(weight: weight, price: price),
-        list: ItemController.currentList,
-      );
+      if(!widget.isEdit) {
+        ItemController.addItem(
+          value: Item(weight: weight, price: price),
+          list: ItemController.currentList,
+        );
+      } else {
+        if(widget.onComplete != null) {
+          widget.onComplete!(weight, price);
+        }
+      }
       Navigator.of(context).pop();
     } else {
       if (weight == null || weight <= 0) weightError = true;
