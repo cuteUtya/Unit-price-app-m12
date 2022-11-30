@@ -11,11 +11,9 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    int updateIteration = 0;
     return StreamBuilder(
       stream: ItemController.mainScreenItems,
       builder: (_, data) {
-        updateIteration++;
         if (data.data != null) {
           var items = data.data!;
           var bestItem = findBestSell(items);
@@ -31,7 +29,6 @@ class _MainScreenState extends State<MainScreen> {
                   item: i,
                   onDismiss: (h) => setState(
                     () {
-                      updateIteration++;
                       ItemController.removeItem(value: h.item);
                     },
                   ),

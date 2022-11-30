@@ -42,7 +42,6 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
       );
       Navigator.of(context).pop();
     } else {
-      print('error');
       if (weight == null || weight <= 0) weightError = true;
       if (price == null || price <= 0) priceError = true;
       setState(() => {});
