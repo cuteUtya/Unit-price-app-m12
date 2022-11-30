@@ -54,7 +54,7 @@ class ItemView extends StatelessWidget {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 2),
+                  padding: const EdgeInsets.only(right: 4),
                   child: Icon(
                     icon,
                     color: fontStyle?.color,
