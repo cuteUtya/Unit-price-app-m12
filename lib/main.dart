@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/Components/NewObjectScreen.dart';
+import 'package:unit_price/Components/Screens/CategoriesScreen.dart';
 import 'package:unit_price/Components/Screens/MainScreen.dart';
 import 'package:unit_price/ItemsController.dart';
 import 'package:unit_price/palette_controller.dart';
@@ -108,10 +109,7 @@ class MyHomePageState extends State<MyHomePage> {
         child: Center(
           child: <Widget>[
             const MainScreen(),
-            Container(
-              alignment: Alignment.center,
-              child: const Text('Page 2'),
-            ),
+            const CategoriesScreen(),
             Container(
               alignment: Alignment.center,
               child: const Text('Page 3'),
