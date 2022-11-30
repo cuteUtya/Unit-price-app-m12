@@ -3,13 +3,24 @@ import 'package:flutter/widgets.dart';
 import 'package:unit_price/ItemsController.dart';
 
 class NewListAlert extends StatefulWidget {
-  const NewListAlert({super.key});
+  const NewListAlert({
+    super.key,
+    this.onDone,
+    this.isEdit = false,
+  });
 
-  static void show(BuildContext context) {
+  final Function(String)? onDone;
+  final bool isEdit;
+
+  static void show(BuildContext context,
+      {bool? isEdit, Function(String)? onDone}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const NewListAlert();
+        return NewListAlert(
+          onDone: onDone,
+          isEdit: isEdit ?? false,
+        );
       },
     );
   }
@@ -19,17 +30,21 @@ class NewListAlert extends StatefulWidget {
 }
 
 class NewListAlertState extends State<NewListAlert> {
-
   TextEditingController controller = TextEditingController();
   bool enterInvalid = false;
 
   void add() {
     var val = controller.value.text;
 
-    if(val.isEmpty) {
+    if (val.isEmpty) {
       setState(() => enterInvalid = true);
     } else {
-      ItemController.addList(name: val);
+      if(widget.onDone != null) {
+        widget.onDone!(val);
+      }
+      if(!widget.isEdit) {
+        ItemController.addList(name: val);
+      }
       Navigator.of(context).pop();
     }
   }
@@ -37,16 +52,16 @@ class NewListAlertState extends State<NewListAlert> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('New list'),
+      title: Text(widget.isEdit ?  'Rename' : 'New list'),
       content: SingleChildScrollView(
         child: ListBody(
-          children:  <Widget>[
+          children: <Widget>[
             TextField(
               autofocus: true,
               onTap: () => setState(() => enterInvalid = false),
               controller: controller,
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: widget.isEdit ? 'New name' : 'Name',
                 errorText: enterInvalid ? 'Name can\'t be empty' : null,
                 border: const OutlineInputBorder(),
               ),
@@ -62,7 +77,7 @@ class NewListAlertState extends State<NewListAlert> {
           },
         ),
         TextButton(
-          child: const Text('Add'),
+          child: Text(widget.isEdit ? 'Edit' : 'Add'),
           onPressed: () {
             add();
           },

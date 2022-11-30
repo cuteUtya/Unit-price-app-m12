@@ -55,6 +55,11 @@ class ItemController {
     _forceUpdateLists();
   }
 
+  static void renameList({required String oldName, required String newName}) {
+    getListByName(oldName)?.name = newName;
+    _forceUpdateLists();
+  }
+
   static void addItem({String? list, required Item value, int? position}) {
     if (list == null) {
       position == null ? _mainScreenValue.add(value) : _mainScreenValue.insert(position, value);

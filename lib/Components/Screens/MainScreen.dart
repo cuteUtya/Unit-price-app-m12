@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unit_price/Components/ItemView.dart';
+import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/ItemsController.dart';
 import 'package:unit_price/palette_controller.dart';
 
@@ -21,6 +22,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  String? overrideName;
   @override
   Widget build(BuildContext context) {
     if (widget.displayedList == null) {
@@ -44,7 +46,9 @@ class _MainScreenState extends State<MainScreen> {
           return _build(
             data.data!
                     .firstWhere(
-                      (element) => element.name == widget.displayedList,
+                      (element) =>
+                          element.name ==
+                          (overrideName ?? widget.displayedList),
                     )
                     .items ??
                 [],
@@ -67,15 +71,34 @@ class _MainScreenState extends State<MainScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: Text(
-                      widget.displayedList!,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                  MaterialButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100.0),
                     ),
-                  ),
+                    onPressed: () {
+                      NewListAlert.show(
+                        context,
+                        isEdit: true,
+                        onDone: (n) {
+                          ItemController.currentList = n;
+                          overrideName = n;
+                          ItemController.renameList(
+                            oldName: widget.displayedList!,
+                            newName: n,
+                          );
+                        },
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: Text(
+                        overrideName ?? widget.displayedList!,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ),
+                  )
                 ],
               ),
               Positioned(
