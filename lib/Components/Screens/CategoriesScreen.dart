@@ -25,6 +25,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             children: [
               for (var l in lists)
                 ListItemView(
+                  onTap: () => print('bebra'),
                   item: l,
                   onDismiss: (i) => ItemController.deleteList(
                     list: i.item.name,
