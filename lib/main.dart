@@ -75,7 +75,7 @@ class MyHomePageState extends State<MyHomePage> {
                 opacity: undoDeletingStack.isNotEmpty ? 1 : 0,
                 duration: const Duration(milliseconds: 250),
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 2),
+                  padding: const EdgeInsets.only(right: 6),
                   child: FloatingActionButton.small(
                     onPressed: () {
                       undoDeletingStack.last.call();
