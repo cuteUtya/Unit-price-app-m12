@@ -26,7 +26,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.displayedList == null) {
-      print('hold update');
       return StreamBuilder(
         stream: ItemController.mainScreenItems,
         builder: (_, data) {
@@ -137,7 +136,7 @@ class _MainScreenState extends State<MainScreen> {
                     },
                   ),
                   meta: ItemCalculationResult(
-                    isBest: bestItem == i,
+                    isBest: bestItem == null ? false : getPricePerKilogram(bestItem) >= getPricePerKilogram(i),
                     pricePerKilogram: getPricePerKilogram(i),
                     percent:
                         (getPricePerKilogram(i) / bestItemPrice! * 100).toInt(),
