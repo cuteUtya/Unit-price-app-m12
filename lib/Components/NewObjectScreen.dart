@@ -36,7 +36,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
     var weight = double.tryParse(_widthEnterController.value.text);
     var price = double.tryParse(_priceEnterController.value.text);
 
-    if (price != null && weight != null) {
+    if (price != null && weight != null && weight > 0 && price > 0) {
       ItemController.addItem(
         value: Item(weight: weight, price: price),
       );
