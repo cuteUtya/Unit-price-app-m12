@@ -95,12 +95,12 @@ class MyHomePageState extends State<MyHomePage> {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.category),
-            label: 'Categories',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.settings),
             label: 'Settings',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.category),
+            label: 'Categories',
           ),
         ],
       ),
@@ -109,11 +109,11 @@ class MyHomePageState extends State<MyHomePage> {
         child: Center(
           child: <Widget>[
             const MainScreen(),
-            const CategoriesScreen(),
             Container(
               alignment: Alignment.center,
               child: const Text('Page 3'),
             ),
+            const CategoriesScreen(),
           ][currentPageIndex],
         ),
       ),
