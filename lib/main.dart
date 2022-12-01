@@ -35,10 +35,18 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Theme.of(context).canvasColor,
-    ));
+    return App();
+  }
+}
+
+class App extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => AppState();
+}
+
+class AppState extends State<App> {
+  @override
+  Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         var brightness = SchedulerBinding.instance.window.platformBrightness;
@@ -47,7 +55,7 @@ class MyApp extends StatelessWidget {
         useDarkTheme = isDarkMode;
 
         return MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Unit price',
           theme: ThemeData(
             colorScheme: useDarkTheme ? darkColorScheme : lightColorScheme,
             useMaterial3: true,
@@ -56,6 +64,14 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance?.window.onPlatformBrightnessChanged = () {
+      setState(() {});
+    };
+    super.initState();
   }
 }
 
@@ -75,49 +91,60 @@ class MyHomePageState extends State<MyHomePage> {
   Widget buildUndoButton(bool transparent) {
     return !transparent
         ? const SizedBox()
-        : Opacity(opacity: 0.8, child: Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: FloatingActionButton.small(
-              onPressed: () {
-                undoDeletingStack.last.call();
-                setState(() => undoDeletingStack.removeLast());
-              },
-              child: const Icon(Icons.undo),
+        : Opacity(
+            opacity: 0.8,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: FloatingActionButton.small(
+                onPressed: () {
+                  undoDeletingStack.last.call();
+                  setState(() => undoDeletingStack.removeLast());
+                },
+                child: const Icon(Icons.undo),
+              ),
             ),
-          ),);
+          );
   }
 
   @override
   Widget build(BuildContext context) {
     var topBarHeight = 52.0;
 
-
-    return  Scaffold(
-      floatingActionButton: Opacity(
-        opacity: 0.8,
-        child: Stack(
-        children: [
-         Wrap(
-            crossAxisAlignment: WrapCrossAlignment.end,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarIconBrightness:
+            useDarkTheme ? Brightness.light : Brightness.dark,
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Theme.of(context).canvasColor,
+      ),
+      child: Scaffold(
+        floatingActionButton: Opacity(
+          opacity: 0.8,
+          child: Stack(
             children: [
-              buildUndoButton(undoDeletingStack.isNotEmpty),
-               Wrap(
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
+                children: [
+                  buildUndoButton(undoDeletingStack.isNotEmpty),
+                  Wrap(
                     direction: Axis.vertical,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       StreamBuilder(
                         stream: ItemController.mainScreenItems,
-                        builder: (_, d) => (d.data?.isEmpty ?? true) ? SizedBox() : FloatingActionButton.small(
-                          onPressed: () {
-                            List<Item> copy =
-                                ItemController.mainScreenValue.toList();
-                            ItemController.deleteList();
-                            onItemDelete(
-                              () => ItemController.addItems(items: copy),
-                            );
-                          },
-                          child: const Icon(Icons.delete),
-                        ),
+                        builder: (_, d) => (d.data?.isEmpty ?? true)
+                            ? SizedBox()
+                            : FloatingActionButton.small(
+                                onPressed: () {
+                                  List<Item> copy =
+                                      ItemController.mainScreenValue.toList();
+                                  ItemController.deleteList();
+                                  onItemDelete(
+                                    () => ItemController.addItems(items: copy),
+                                  );
+                                },
+                                child: const Icon(Icons.delete_outline),
+                              ),
                       ),
                       const SizedBox(
                         height: 4,
@@ -129,86 +156,89 @@ class MyHomePageState extends State<MyHomePage> {
                       ),
                     ],
                   ),
-            ],
-          ),
-        ],
-      ),),
-      body: Stack(
-        fit: StackFit.loose,
-        children: [
-          ListView(
-            children: [
-              const SizedBox(
-                height: 52,
-              ),
-              MainScreen(
-                controller: contentScreenshot,
-                removeAdditionPaddings: true,
-                displayedList: ItemController.currentList,
-                onCloseList: () => setState(
-                  () => ItemController.currentList = null,
-                ),
-                onItemDelete: onItemDelete,
+                ],
               ),
             ],
           ),
-          SizedBox(
-            height: topBarHeight + MediaQuery.of(context).padding.top,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                child: Container(
-                  color: Colors.transparent.withOpacity(0.1),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0 + MediaQuery.of(context).padding.top
-            ,
-            left: 0,
-            right: 0,
-            height: topBarHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+        ),
+        body: Stack(
+          fit: StackFit.loose,
+          children: [
+            ListView(
               children: [
-                IconButton(
-                  onPressed: () async {
-                    var status = await Permission.storage.status;
-                    if (status.isDenied) {
-                      await Permission.storage.request();
-                    }
-
-                    var screenshot = await contentScreenshot.capture();
-                    Directory tempDir = await getTemporaryDirectory();
-                    String tempPath = '${tempDir.path}/screen.jpeg';
-
-                    var file = await File(tempPath).writeAsBytes(screenshot!);
-                    await Share.shareXFiles([XFile(file.path)]);
-                    },
-                  icon: Icon(
-                    SpectrumIcons.export_image,
-                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-                  ),
+                const SizedBox(
+                  height: 52,
                 ),
-                IconButton(
-                  onPressed: () async {
-                    await Share.share(
-                      formatList(
-                        ItemController.mainScreenValue,
-                        findBestSell(ItemController.mainScreenValue)!,
-                      ),
-                    );
-                  },
-                  icon: Icon(
-                    SpectrumIcons.export_textv1,
-                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                MainScreen(
+                  controller: contentScreenshot,
+                  removeAdditionPaddings: true,
+                  displayedList: ItemController.currentList,
+                  onCloseList: () => setState(
+                    () => ItemController.currentList = null,
                   ),
+                  onItemDelete: onItemDelete,
                 ),
               ],
             ),
-          )
-        ],
+            SizedBox(
+              height: topBarHeight + MediaQuery.of(context).padding.top,
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(
+                    color: Colors.transparent.withOpacity(0.1),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0 + MediaQuery.of(context).padding.top,
+              left: 0,
+              right: 0,
+              height: topBarHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      var status = await Permission.storage.status;
+                      if (status.isDenied) {
+                        await Permission.storage.request();
+                      }
+
+                      var screenshot = await contentScreenshot.capture();
+                      Directory tempDir = await getTemporaryDirectory();
+                      String tempPath = '${tempDir.path}/screen.jpeg';
+
+                      var file = await File(tempPath).writeAsBytes(screenshot!);
+                      await Share.shareXFiles([XFile(file.path)]);
+                    },
+                    icon: Icon(
+                      SpectrumIcons.export_image,
+                      color:
+                          Theme.of(context).appBarTheme.titleTextStyle?.color,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await Share.share(
+                        formatList(
+                          ItemController.mainScreenValue,
+                          findBestSell(ItemController.mainScreenValue)!,
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      SpectrumIcons.export_textv1,
+                      color:
+                          Theme.of(context).appBarTheme.titleTextStyle?.color,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
