@@ -184,18 +184,16 @@ class MyHomePageState extends State<MyHomePage> {
                     String tempPath = '${tempDir.path}/screen.jpeg';
 
                     var file = await File(tempPath).writeAsBytes(screenshot!);
-                    Share.shareXFiles([XFile(file.path)]);
-
-                    //TODO
-                  },
+                    await Share.shareXFiles([XFile(file.path)]);
+                    },
                   icon: Icon(
                     SpectrumIcons.export_image,
                     color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    Share.share(
+                  onPressed: () async {
+                    await Share.share(
                       formatList(
                         ItemController.mainScreenValue,
                         findBestSell(ItemController.mainScreenValue)!,
@@ -256,7 +254,8 @@ class MyHomePageState extends State<MyHomePage> {
       newLine += "".padRight(biggestStatus);
       newLine += "Цена${space(5)}";
       newLine += formatNumber(i.price!);
-      newLine += "\n\n";
+      newLine += "\n";
+      newLine += items.indexOf(i) + 1 == items.length ? '' : "\n";
 
       result += newLine;
     }
