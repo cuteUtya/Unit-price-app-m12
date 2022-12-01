@@ -152,7 +152,6 @@ class MyHomePageState extends State<MyHomePage> {
                       FloatingActionButton(
                         onPressed: () => NewObjectScreen.show(context),
                         child: const Icon(Icons.add),
-                        //icon: Icons.add,
                       ),
                     ],
                   ),
@@ -215,7 +214,7 @@ class MyHomePageState extends State<MyHomePage> {
                     },
                     icon: Icon(
                       SpectrumIcons.export_image,
-                      color:
+                      color: useDarkTheme ? Colors.white :
                           Theme.of(context).appBarTheme.titleTextStyle?.color,
                     ),
                   ),
@@ -231,7 +230,7 @@ class MyHomePageState extends State<MyHomePage> {
                     icon: Icon(
                       SpectrumIcons.export_textv1,
                       color:
-                          Theme.of(context).appBarTheme.titleTextStyle?.color,
+                          useDarkTheme ? Colors.white : Theme.of(context).appBarTheme.titleTextStyle?.color,
                     ),
                   ),
                 ],
