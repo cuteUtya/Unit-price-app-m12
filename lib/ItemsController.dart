@@ -90,6 +90,11 @@ class ItemController {
     _forceUpdateLists();
   }
 
+  static void addItems({required List<Item> items}) {
+    mainScreenValue.addAll(items);
+    _forceUpdateMainItemsList();
+  }
+
   static void addItem({String? list, required Item value, int? position}) {
     if (list == null) {
       position == null
