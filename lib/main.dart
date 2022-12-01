@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
     );
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        var brightness = MediaQuery.of(context).platformBrightness;
+        var brightness = SchedulerBinding.instance.window.platformBrightness;
         bool isDarkMode = brightness == Brightness.dark;
 
         useDarkTheme = isDarkMode;
