@@ -8,7 +8,7 @@ class ItemController {
 
   static final BehaviorSubject<List<Item>> _mainScreenItems = BehaviorSubject();
   static Stream<List<Item>> get mainScreenItems => _mainScreenItems.stream;
-  static List<Item> _mainScreenValue = [];
+  static List<Item> mainScreenValue = [];
 
   static final BehaviorSubject<List<ItemList>> _lists = BehaviorSubject();
   static Stream<List<ItemList>> get lists => _lists.stream;
@@ -21,7 +21,7 @@ class ItemController {
     if (jsonV?.isNotEmpty ?? false) {
       var dataObject = _AppData.fromJson(json.decode(jsonV!));
       _listsValue = dataObject.lists ?? [];
-      _mainScreenValue = dataObject.mainScreenItems ?? [];
+      mainScreenValue = dataObject.mainScreenItems ?? [];
       _forceUpdateLists();
       _forceUpdateMainItemsList();
     }
@@ -33,7 +33,7 @@ class ItemController {
       'data',
       json.encode(
         _AppData(
-          mainScreenItems: _mainScreenValue,
+          mainScreenItems: mainScreenValue,
           lists: _listsValue,
         ),
       ),
@@ -41,11 +41,10 @@ class ItemController {
   }
 
   static bool checkItemUnique(Item item) {
-
     bool value = true;
 
-    for (var element in _mainScreenValue) {
-      if(element.price == item.price && element.weight == item.weight) {
+    for (var element in mainScreenValue) {
+      if (element.price == item.price && element.weight == item.weight) {
         value = false;
       }
     }
@@ -63,7 +62,7 @@ class ItemController {
   static void replaceItem(
       {required Item oldItem, required Item newItem, String? list}) {
     List<Item>? arr =
-        list == null ? _mainScreenValue : getListByName(list!)?.items;
+        list == null ? mainScreenValue : getListByName(list!)?.items;
 
     if (arr != null) {
       var i = arr.indexOf(oldItem);
@@ -71,12 +70,12 @@ class ItemController {
       arr.insert(i, newItem);
     }
 
-    list == null ? _forceUpdateMainItemsList() : _forceUpdateLists() ;
+    list == null ? _forceUpdateMainItemsList() : _forceUpdateLists();
   }
 
   static void addList(
       {required String name, List<Item>? items, int? position}) {
-    var value = ItemList(items: items ?? _mainScreenValue, name: name);
+    var value = ItemList(items: items ?? mainScreenValue, name: name);
     position == null
         ? _listsValue.add(value)
         : _listsValue.insert(position!, value);
@@ -94,8 +93,8 @@ class ItemController {
   static void addItem({String? list, required Item value, int? position}) {
     if (list == null) {
       position == null
-          ? _mainScreenValue.add(value)
-          : _mainScreenValue.insert(position, value);
+          ? mainScreenValue.add(value)
+          : mainScreenValue.insert(position, value);
       _forceUpdateMainItemsList();
     } else {
       var listValue = getListByName(list);
@@ -110,7 +109,7 @@ class ItemController {
 
   static void removeItem({String? list, required Item value}) {
     if (list == null) {
-      _mainScreenValue.remove(value);
+      mainScreenValue.remove(value);
       _forceUpdateMainItemsList();
     } else {
       var listValue = getListByName(list);
@@ -123,7 +122,7 @@ class ItemController {
 
   static void deleteList({String? list}) {
     if (list == null) {
-      _mainScreenValue = [];
+      mainScreenValue = [];
       _forceUpdateMainItemsList();
     } else {
       var l = getListByName(list);
@@ -135,7 +134,7 @@ class ItemController {
   }
 
   static void _forceUpdateMainItemsList() {
-    _mainScreenItems.add(_mainScreenValue);
+    _mainScreenItems.add(mainScreenValue);
     save();
   }
 

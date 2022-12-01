@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:dynamic_color/dynamic_color.dart';
@@ -12,8 +13,10 @@ import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/Components/NewObjectScreen.dart';
 import 'package:unit_price/Components/Screens/CategoriesScreen.dart';
 import 'package:unit_price/Components/Screens/MainScreen.dart';
+import 'package:unit_price/Icons/spectrum_icons_icons.dart';
 import 'package:unit_price/ItemsController.dart';
 import 'package:unit_price/ThemeController.dart';
+import 'package:unit_price/numberFormatter.dart';
 import 'package:unit_price/palette_controller.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
@@ -150,18 +153,7 @@ class MyHomePageState extends State<MyHomePage> {
                       await Permission.storage.request();
                     }
 
-                    var screenshot = await contentScreenshot
-                        .capture(); /*captureFromWidget(
-                      Container(
-                        height: double.infinity,
-                        color: Theme.of(context).colorScheme.background,
-                        child: MediaQuery(
-                          data: MediaQuery.of(context),
-                          child: mainScreen(true),
-                        ),
-                      ),
-                      delay: const Duration(milliseconds: 50),
-                    );*/
+                    var screenshot = await contentScreenshot.capture();
                     Directory tempDir = await getTemporaryDirectory();
                     String tempPath = '${tempDir.path}/screen.jpeg';
 
@@ -171,21 +163,21 @@ class MyHomePageState extends State<MyHomePage> {
                     //TODO
                   },
                   icon: Icon(
-                    Icons.image,
+                    SpectrumIcons.export_image,
                     color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Share.share(
+                      formatList(
+                        ItemController.mainScreenValue,
+                        findBestSell(ItemController.mainScreenValue)!,
+                      ),
+                    );
+                  },
                   icon: Icon(
-                    Icons.text_fields,
-                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.download,
+                    SpectrumIcons.export_textv1,
                     color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                   ),
                 ),
@@ -195,6 +187,53 @@ class MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  String formatList(List<Item> items, Item bestSale) {
+    String result = '';
+
+    int m(int d) => d < 0 ? 0 : d;
+
+    var bestKgPrice = getPricePerKilogram(bestSale);
+
+    String getStatus(Item i) {
+      var pPerK = getPricePerKilogram(i);
+      bool isBest = bestKgPrice >= pPerK;
+      var fColumn = isBest ? "👍" : "+${(formatNumber(pPerK / bestKgPrice * 100 - 100))}%";
+      fColumn = "[$fColumn]";
+      return fColumn;
+    }
+
+    String space(int count) {
+      return List.filled(count, ' ').join();
+    }
+
+
+    var biggestStatus = items.map((e) => getStatus(e).length).reduce(max) + 1;
+
+    for (var i in items) {
+      var pPerK = getPricePerKilogram(i);
+
+      String newLine = '';
+      var status = getStatus(i);
+      status += space(biggestStatus -  status.length - (status.contains('👍') ? 1 : 0));
+      newLine += status;
+      newLine += 'Цена/кг${space(2)}';
+      newLine += formatNumber(pPerK);
+      newLine += "\n";
+      newLine += " ".padRight(biggestStatus);
+      newLine += "Вес${space(6)}";
+      newLine += formatNumber(i.weight!);
+      newLine += "\n";
+      newLine += "".padRight(biggestStatus);
+      newLine += "Цена${space(5)}";
+      newLine += formatNumber(i.price!);
+      newLine += "\n\n";
+
+      result += newLine;
+    }
+
+    return "```$result```";
   }
 
   void onItemDelete(Function prevent) {

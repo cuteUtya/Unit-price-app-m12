@@ -24,4 +24,7 @@ class SpectrumIcons {
   static const IconData weight_kilogram = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData scale = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData cash_register = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData export_image = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData export_textv2 = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData export_textv1 = IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

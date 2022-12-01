@@ -4,6 +4,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:unit_price/Components/ItemView.dart';
 import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/ItemsController.dart';
+import 'package:unit_price/numberFormatter.dart';
 import 'package:unit_price/palette_controller.dart';
 
 class MainScreen extends StatefulWidget {
@@ -72,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Screenshot(
         controller: widget.controller,
         child: ColoredBox(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).canvasColor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -179,21 +180,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  double getPricePerKilogram(Item item) {
-    return ((1000 / item.weight!) * item.price!);
-  }
 
-  Item? findBestSell(List<Item> items) {
-    if (items.isEmpty) return null;
 
-    Item best = items.first;
-
-    for (var item in items) {
-      if (getPricePerKilogram(item) < getPricePerKilogram(best)) {
-        best = item;
-      }
-    }
-
-    return best;
-  }
 }
