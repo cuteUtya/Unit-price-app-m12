@@ -1,8 +1,13 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/Components/NewObjectScreen.dart';
 import 'package:unit_price/Components/Screens/CategoriesScreen.dart';
@@ -50,9 +55,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  //int currentPageIndex = 1;
   String? openedCategoryName;
   List<Function> undoDeletingStack = [];
+  ScreenshotController contentScreenshot = ScreenshotController();
 
   Widget buildUndoButton(bool transparent) {
     return AnimatedOpacity(
@@ -73,7 +78,7 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var topBarHeight = 64.0;
+    var topBarHeight = 52.0;
 
     return Scaffold(
       floatingActionButton: Stack(
@@ -101,14 +106,17 @@ class MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Stack(
+        fit: StackFit.loose,
         children: [
-          MainScreen(
+          ListView(children: [ SizedBox(height: 52,), MainScreen(
+            controller: contentScreenshot,
+            removeAdditionPaddings: true,
             displayedList: ItemController.currentList,
             onCloseList: () => setState(
               () => ItemController.currentList = null,
             ),
             onItemDelete: onItemDelete,
-          ),
+          ),],),
           SizedBox(
             height: topBarHeight,
             child: ClipRect(
@@ -129,9 +137,48 @@ class MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
+                  onPressed: () async {
+                    var status = await Permission.storage.status;
+                    if (status.isDenied) {
+                      await Permission.storage.request();
+                    }
+
+                    var screenshot = await contentScreenshot
+                        .capture(); /*captureFromWidget(
+                      Container(
+                        height: double.infinity,
+                        color: Theme.of(context).colorScheme.background,
+                        child: MediaQuery(
+                          data: MediaQuery.of(context),
+                          child: mainScreen(true),
+                        ),
+                      ),
+                      delay: const Duration(milliseconds: 50),
+                    );*/
+                    Directory tempDir = await getTemporaryDirectory();
+                    String tempPath = '${tempDir.path}/screen.jpeg';
+
+                    var file = await File(tempPath).writeAsBytes(screenshot!);
+                    Share.shareXFiles([XFile(file.path)]);
+
+                    //TODO
+                  },
+                  icon: Icon(
+                    Icons.image,
+                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  ),
+                ),
+                IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    Icons.ios_share_rounded,
+                    Icons.text_fields,
+                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.download,
                     color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                   ),
                 ),

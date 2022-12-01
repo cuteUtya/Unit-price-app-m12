@@ -138,7 +138,7 @@ class ItemView extends StatelessWidget {
               icon: SpectrumIcons.weight_kilogram,
               name: "Цена за кг",
               isHeadline: true,
-              badge: "${meta.percent}%",
+              badge: "${meta.percent - 100}%",
               value: formatNumber(meta.pricePerKilogram),
             ),
             buildLine(
