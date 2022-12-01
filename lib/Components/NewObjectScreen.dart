@@ -43,6 +43,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
 
   bool weightError = false;
   bool priceError = false;
+  bool isUniqueError = false;
 
   void clearError() {
     weightError = false;
@@ -53,6 +54,14 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
   void addValue(BuildContext context) {
     var weight = double.tryParse(_widthEnterController.value.text);
     var price = double.tryParse(_priceEnterController.value.text);
+
+    if(!ItemController.checkItemUnique(Item(weight: weight, price: price))){
+      weightError = true;
+      priceError = true;
+      isUniqueError = true;
+      setState(() => {});
+      return;
+    }
 
     if (price != null && weight != null && weight > 0 && price > 0) {
       if(!widget.isEdit) {
@@ -69,6 +78,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
     } else {
       if (weight == null || weight <= 0) weightError = true;
       if (price == null || price <= 0) priceError = true;
+      isUniqueError = false;
       setState(() => {});
     }
   }
@@ -112,7 +122,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           decoration: InputDecoration(
                             labelText: 'Weigh',
                             border: const OutlineInputBorder(),
-                            errorText: weightError ? 'invalid' : null,
+                            errorText: weightError ? (isUniqueError ? '' : 'invalid') : null,
                           ),
                         ),
                       ),
@@ -126,7 +136,7 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           decoration: InputDecoration(
                             labelText: 'Price',
                             border: const OutlineInputBorder(),
-                            errorText: priceError ? 'invalid' : null,
+                            errorText: priceError ? (isUniqueError ? 'Value already in list' : 'invalid') : null,
                           ),
                           onSubmitted: (_) => addValue(context),
                         ),

@@ -108,15 +108,22 @@ class MyHomePageState extends State<MyHomePage> {
       body: Stack(
         fit: StackFit.loose,
         children: [
-          ListView(children: [ SizedBox(height: 52,), MainScreen(
-            controller: contentScreenshot,
-            removeAdditionPaddings: true,
-            displayedList: ItemController.currentList,
-            onCloseList: () => setState(
-              () => ItemController.currentList = null,
-            ),
-            onItemDelete: onItemDelete,
-          ),],),
+          ListView(
+            children: [
+              const SizedBox(
+                height: 52,
+              ),
+              MainScreen(
+                controller: contentScreenshot,
+                removeAdditionPaddings: true,
+                displayedList: ItemController.currentList,
+                onCloseList: () => setState(
+                  () => ItemController.currentList = null,
+                ),
+                onItemDelete: onItemDelete,
+              ),
+            ],
+          ),
           SizedBox(
             height: topBarHeight,
             child: ClipRect(

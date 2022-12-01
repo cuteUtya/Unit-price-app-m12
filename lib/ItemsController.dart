@@ -40,6 +40,19 @@ class ItemController {
     );
   }
 
+  static bool checkItemUnique(Item item) {
+
+    bool value = true;
+
+    for (var element in _mainScreenValue) {
+      if(element.price == item.price && element.weight == item.weight) {
+        value = false;
+      }
+    }
+
+    return value;
+  }
+
   static ItemList? getListByName(String name) {
     for (var i in _listsValue) {
       if (i.name == name) return i;
