@@ -73,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Screenshot(
         controller: widget.controller,
         child: ColoredBox(
-          color: Theme.of(context).canvasColor,
+          color: Theme.of(context).colorScheme.background,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

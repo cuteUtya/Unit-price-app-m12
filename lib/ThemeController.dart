@@ -6,7 +6,7 @@ int getToneOfColor(int lightTone) {
   return {
     100: 0,
     99: 10,
-    95: 20,
+    95: 30,
     90: 30,
     80: 40,
     70: 50,

@@ -57,7 +57,7 @@ class AppState extends State<App> {
         return MaterialApp(
           title: 'Unit price',
           theme: ThemeData(
-            colorScheme: useDarkTheme ? darkColorScheme : lightColorScheme,
+            colorScheme: (useDarkTheme ? darkColorScheme : lightColorScheme),
             useMaterial3: true,
           ),
           home: const MyHomePage(),
@@ -99,7 +99,7 @@ class MyHomePageState extends State<MyHomePage> {
                   setState(() => undoDeletingStack.removeLast());
                 },
                 child: const Icon(Icons.undo),
-              
+
             ),
           );
   }
@@ -113,7 +113,7 @@ class MyHomePageState extends State<MyHomePage> {
         statusBarIconBrightness:
             useDarkTheme ? Brightness.light : Brightness.dark,
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Theme.of(context).canvasColor,
+        systemNavigationBarColor: Theme.of(context).colorScheme.background,
       ),
       child: Scaffold(
         floatingActionButton: Opacity(
