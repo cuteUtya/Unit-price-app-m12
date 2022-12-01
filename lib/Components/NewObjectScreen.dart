@@ -59,7 +59,9 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
       weightError = true;
       priceError = true;
       isUniqueError = true;
-      setState(() => {});
+      setState(() => {
+        FocusScope.of(context).requestFocus(priceFocus)
+      });
       return;
     }
 
