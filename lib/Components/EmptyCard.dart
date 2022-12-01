@@ -23,7 +23,7 @@ class EmptyCard extends StatelessWidget {
             Theme.of(context).colorScheme.surfaceVariant.value);
 
     var radius = const BorderRadius.all(
-      Radius.circular(10),
+      Radius.circular(16),
     );
 
     Widget child = this.child;

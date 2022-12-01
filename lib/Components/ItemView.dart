@@ -81,7 +81,7 @@ class ItemView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Color(palette?.tertiary.get(50) ?? 0),
                           borderRadius: const BorderRadius.all(
-                            Radius.circular(8),
+                            Radius.circular(10),
                           ),
                         ),
                         child: Text(
@@ -102,7 +102,7 @@ class ItemView extends StatelessWidget {
                   : BoxDecoration(
                       color: textBackColor,
                       borderRadius: const BorderRadius.all(
-                        Radius.circular(8),
+                        Radius.circular(10),
                       ),
                     ),
               child: Text(
