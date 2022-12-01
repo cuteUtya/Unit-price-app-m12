@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:unit_price/ThemeController.dart';
 import 'package:unit_price/palette_controller.dart';
 
 class EmptyCard extends StatelessWidget {
@@ -18,7 +19,7 @@ class EmptyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     var palette = PaletteController.palette;
     var color = cardColor ??
-        Color(palette?.primary?.get(95) ??
+        Color(palette?.primary?.get(getToneOfColor(95)) ??
             Theme.of(context).colorScheme.surfaceVariant.value);
 
     var radius = const BorderRadius.all(

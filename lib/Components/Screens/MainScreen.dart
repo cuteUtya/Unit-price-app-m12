@@ -114,6 +114,9 @@ class _MainScreenState extends State<MainScreen> {
         Expanded(
           child: ListView(
             children: [
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
               for (var i in items)
                 ItemView(
                   key: UniqueKey(),
@@ -136,7 +139,10 @@ class _MainScreenState extends State<MainScreen> {
                     },
                   ),
                   meta: ItemCalculationResult(
-                    isBest: bestItem == null ? false : getPricePerKilogram(bestItem) >= getPricePerKilogram(i),
+                    isBest: bestItem == null
+                        ? false
+                        : getPricePerKilogram(bestItem) >=
+                            getPricePerKilogram(i),
                     pricePerKilogram: getPricePerKilogram(i),
                     percent:
                         (getPricePerKilogram(i) / bestItemPrice! * 100).toInt(),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +8,7 @@ import 'package:unit_price/Components/NewObjectScreen.dart';
 import 'package:unit_price/Components/Screens/CategoriesScreen.dart';
 import 'package:unit_price/Components/Screens/MainScreen.dart';
 import 'package:unit_price/ItemsController.dart';
+import 'package:unit_price/ThemeController.dart';
 import 'package:unit_price/palette_controller.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
@@ -30,7 +33,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(
-            colorScheme: lightColorScheme,
+            colorScheme: useDarkTheme ? darkColorScheme : lightColorScheme,
             useMaterial3: true,
           ),
           home: const MyHomePage(),
@@ -47,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  int currentPageIndex = 2;
+  //int currentPageIndex = 1;
   String? openedCategoryName;
   List<Function> undoDeletingStack = [];
 
@@ -59,7 +62,6 @@ class MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.only(right: 6),
         child: FloatingActionButton.small(
           onPressed: () {
-
             undoDeletingStack.last.call();
             setState(() => undoDeletingStack.removeLast());
           },
@@ -71,108 +73,72 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    const duration = Duration(milliseconds: 250);
+    var topBarHeight = 64.0;
 
     return Scaffold(
       floatingActionButton: Stack(
         children: [
-          AnimatedOpacity(
-            duration: duration,
-            opacity: currentPageIndex != 2 ? 0 : 1,
-            child: AnimatedContainer(
-              duration: duration,
-              transform: Matrix4.translation(
-                vector.Vector3(
-                  currentPageIndex != 2 ? 100 : 0,
-                  0,
-                  0,
-                ),
-              ),
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.end,
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.end,
+            children: [
+              buildUndoButton(undoDeletingStack.isNotEmpty),
+              Wrap(
+                direction: Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  buildUndoButton(undoDeletingStack.isNotEmpty),
-                  Wrap(
-                    direction: Axis.vertical,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      AnimatedOpacity(
-                        opacity: ItemController.currentList == null ? 1 : 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: FloatingActionButton.small(
-                          onPressed: () => NewListAlert.show(context),
-                          child: const Icon(Icons.playlist_add),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      FloatingActionButton(
-                        onPressed: () => NewObjectScreen.show(context),
-                        child: const Icon(Icons.add),
-                        //icon: Icons.add,
-                      ),
-                    ],
+                  Opacity(
+                    opacity: 0.8,
+                    child: FloatingActionButton(
+                      onPressed: () => NewObjectScreen.show(context),
+                      child: const Icon(Icons.add),
+                      //icon: Icons.add,
+                    ),
                   ),
                 ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          MainScreen(
+            displayedList: ItemController.currentList,
+            onCloseList: () => setState(
+              () => ItemController.currentList = null,
+            ),
+            onItemDelete: onItemDelete,
+          ),
+          SizedBox(
+            height: topBarHeight,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                child: Container(
+                  color: Colors.transparent.withOpacity(0.1),
+                ),
               ),
             ),
           ),
           Positioned(
+            top: 0,
+            left: 0,
             right: 0,
-            bottom: 0,
-            child: currentPageIndex == 1 && undoDeletingStack.isNotEmpty ? buildUndoButton(
-              true,
-            ) : Container(),
+            height: topBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.ios_share_rounded,
+                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  ),
+                ),
+              ],
+            ),
           )
         ],
-      ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (index) => setState(
-          () => currentPageIndex = index,
-        ),
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.category),
-            label: 'Categories',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-        ],
-      ),
-      body: ColoredBox(
-        color: Theme.of(context).colorScheme.background,
-        child: Center(
-          child: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              child: const Text('Page 3'),
-            ),
-            CategoriesScreen(
-              onListDelete: (i) => onItemDelete(i),
-              onCategoryOpen: (name) => {
-                setState(
-                  () {
-                    currentPageIndex = 2;
-                    ItemController.currentList = name;
-                  },
-                )
-              },
-            ),
-            MainScreen(
-              displayedList: ItemController.currentList,
-              onCloseList: () => setState(
-                () => ItemController.currentList = null,
-              ),
-              onItemDelete: onItemDelete,
-            ),
-          ][currentPageIndex],
-        ),
       ),
     );
   }
