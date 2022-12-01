@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:dynamic_color/test_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -34,10 +35,10 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: [SystemUiOverlay.bottom],
-    );
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Theme.of(context).canvasColor,
+    ));
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
         var brightness = SchedulerBinding.instance.window.platformBrightness;
@@ -74,7 +75,7 @@ class MyHomePageState extends State<MyHomePage> {
   Widget buildUndoButton(bool transparent) {
     return !transparent
         ? const SizedBox()
-        : Padding(
+        : Opacity(opacity: 0.8, child: Padding(
             padding: const EdgeInsets.only(right: 6),
             child: FloatingActionButton.small(
               onPressed: () {
@@ -83,23 +84,24 @@ class MyHomePageState extends State<MyHomePage> {
               },
               child: const Icon(Icons.undo),
             ),
-          );
+          ),);
   }
 
   @override
   Widget build(BuildContext context) {
     var topBarHeight = 52.0;
 
-    return Scaffold(
-      floatingActionButton: Stack(
+
+    return  Scaffold(
+      floatingActionButton: Opacity(
+        opacity: 0.8,
+        child: Stack(
         children: [
-          Wrap(
+         Wrap(
             crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               buildUndoButton(undoDeletingStack.isNotEmpty),
-              Opacity(
-                  opacity: 0.8,
-                  child: Wrap(
+               Wrap(
                     direction: Axis.vertical,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
@@ -126,11 +128,11 @@ class MyHomePageState extends State<MyHomePage> {
                         //icon: Icons.add,
                       ),
                     ],
-                  )),
+                  ),
             ],
           ),
         ],
-      ),
+      ),),
       body: Stack(
         fit: StackFit.loose,
         children: [
@@ -151,7 +153,7 @@ class MyHomePageState extends State<MyHomePage> {
             ],
           ),
           SizedBox(
-            height: topBarHeight,
+            height: topBarHeight + MediaQuery.of(context).padding.top,
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
@@ -162,7 +164,8 @@ class MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Positioned(
-            top: 0,
+            top: 0 + MediaQuery.of(context).padding.top
+            ,
             left: 0,
             right: 0,
             height: topBarHeight,
