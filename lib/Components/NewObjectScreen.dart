@@ -18,7 +18,10 @@ class NewObjectScreen extends StatefulWidget {
   final double? price;
 
   static void show(BuildContext context,
-      {bool isEdit = false, Function(double, double)? onComplete, double? weight, double? price}) {
+      {bool isEdit = false,
+      Function(double, double)? onComplete,
+      double? weight,
+      double? price}) {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -37,9 +40,14 @@ class NewObjectScreen extends StatefulWidget {
 }
 
 class _NewObjectScreenState extends State<NewObjectScreen> {
-   late final TextEditingController _widthEnterController = TextEditingController(text: widget.weight == null ? null : formatNumber(widget.weight!));
-   late final TextEditingController _priceEnterController = TextEditingController(text: widget.price == null ? null : formatNumber(widget.price!));
+  late final TextEditingController _widthEnterController =
+      TextEditingController(
+          text: widget.weight == null ? null : formatNumber(widget.weight!));
+  late final TextEditingController _priceEnterController =
+      TextEditingController(
+          text: widget.price == null ? null : formatNumber(widget.price!));
   final FocusNode priceFocus = FocusNode();
+  final FocusNode weighFocus = FocusNode();
 
   bool weightError = false;
   bool priceError = false;
@@ -51,28 +59,33 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
     setState(() => {});
   }
 
+  void delayClearError() {
+    Future.delayed(const Duration(seconds: 1), () => clearError());
+  }
+
   void addValue(BuildContext context) {
     var weight = double.tryParse(_widthEnterController.value.text);
     var price = double.tryParse(_priceEnterController.value.text);
 
-    if(!ItemController.checkItemUnique(Item(weight: weight, price: price))){
+    if (!ItemController.checkItemUnique(Item(weight: weight, price: price))) {
       weightError = true;
       priceError = true;
       isUniqueError = true;
-      setState(() => {
-        FocusScope.of(context).requestFocus(priceFocus)
+      setState(() {
+        FocusScope.of(context).requestFocus(priceFocus);
+        delayClearError();
       });
       return;
     }
 
     if (price != null && weight != null && weight > 0 && price > 0) {
-      if(!widget.isEdit) {
+      if (!widget.isEdit) {
         ItemController.addItem(
           value: Item(weight: weight, price: price),
           list: ItemController.currentList,
         );
       } else {
-        if(widget.onComplete != null) {
+        if (widget.onComplete != null) {
           widget.onComplete!(weight, price);
         }
       }
@@ -81,7 +94,14 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
       if (weight == null || weight <= 0) weightError = true;
       if (price == null || price <= 0) priceError = true;
       isUniqueError = false;
-      setState(() => {});
+      setState(() {
+        if (weightError) {
+          FocusScope.of(context).requestFocus(weighFocus);
+        } else {
+          FocusScope.of(context).requestFocus(priceFocus);
+        }
+        delayClearError();
+      });
     }
   }
 
@@ -119,12 +139,15 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           onTap: () => clearError(),
                           controller: _widthEnterController,
                           keyboardType: TextInputType.number,
+                          focusNode: weighFocus,
                           onSubmitted: (_) =>
                               FocusScope.of(context).requestFocus(priceFocus),
                           decoration: InputDecoration(
-                            labelText: 'Weigh',
+                            labelText: 'Вес',
                             border: const OutlineInputBorder(),
-                            errorText: weightError ? (isUniqueError ? '' : 'invalid') : null,
+                            errorText: weightError
+                                ? (isUniqueError ? '' : 'Ошибка ввода')
+                                : null,
                           ),
                         ),
                       ),
@@ -136,9 +159,13 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           onTap: () => clearError(),
                           focusNode: priceFocus,
                           decoration: InputDecoration(
-                            labelText: 'Price',
+                            labelText: 'Цена',
                             border: const OutlineInputBorder(),
-                            errorText: priceError ? (isUniqueError ? 'Value already in list' : 'invalid') : null,
+                            errorText: priceError
+                                ? (isUniqueError
+                                    ? 'Уже в списке'
+                                    : 'Ошибка ввода')
+                                : null,
                           ),
                           onSubmitted: (_) => addValue(context),
                         ),
