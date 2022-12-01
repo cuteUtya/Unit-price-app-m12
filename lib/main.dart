@@ -91,9 +91,7 @@ class MyHomePageState extends State<MyHomePage> {
   Widget buildUndoButton(bool transparent) {
     return !transparent
         ? const SizedBox()
-        : Opacity(
-            opacity: 0.8,
-            child: Padding(
+        :  Padding(
               padding: const EdgeInsets.only(right: 6),
               child: FloatingActionButton.small(
                 onPressed: () {
@@ -101,7 +99,7 @@ class MyHomePageState extends State<MyHomePage> {
                   setState(() => undoDeletingStack.removeLast());
                 },
                 child: const Icon(Icons.undo),
-              ),
+              
             ),
           );
   }
