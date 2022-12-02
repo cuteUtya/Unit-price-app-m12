@@ -158,7 +158,7 @@ class MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: Stack(
+        body: ColoredBox(color: Theme.of(context).colorScheme.background, child: Stack(
           fit: StackFit.loose,
           children: [
             ListView(
@@ -191,7 +191,7 @@ class MyHomePageState extends State<MyHomePage> {
             Positioned(
               top: 0 + MediaQuery.of(context).padding.top,
               left: 0,
-              right: 0,
+              right: 14,
               height: topBarHeight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -235,7 +235,7 @@ class MyHomePageState extends State<MyHomePage> {
               ),
             )
           ],
-        ),
+        ),),
       ),
     );
   }
