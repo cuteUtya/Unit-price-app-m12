@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:dynamic_color/test_utils.dart';
+import 'package:dynamic_color/samples.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -12,16 +11,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:unit_price/Components/NewListAlert.dart';
 import 'package:unit_price/Components/NewObjectScreen.dart';
-import 'package:unit_price/Components/Screens/CategoriesScreen.dart';
 import 'package:unit_price/Components/Screens/MainScreen.dart';
 import 'package:unit_price/Icons/spectrum_icons_icons.dart';
 import 'package:unit_price/ItemsController.dart';
 import 'package:unit_price/ThemeController.dart';
 import 'package:unit_price/numberFormatter.dart';
 import 'package:unit_price/palette_controller.dart';
-import 'package:vector_math/vector_math_64.dart' as vector;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,10 +50,16 @@ class AppState extends State<App> {
 
         useDarkTheme = isDarkMode;
 
+        var color = useDarkTheme ? darkColorScheme : lightColorScheme;
+
+        var seedColor = const Color(0xff3279a8);
+        color ??= ColorScheme.fromSeed(seedColor: seedColor, brightness: useDarkTheme ? Brightness.dark : Brightness.light,);
+        if(lightColorScheme == null) PaletteController.set(color.primary.value);
+
         return MaterialApp(
           title: 'Unit price',
           theme: ThemeData(
-            colorScheme: (useDarkTheme ? darkColorScheme : lightColorScheme),
+            colorScheme: color,
             useMaterial3: true,
           ),
           home: const MyHomePage(),
@@ -91,15 +93,14 @@ class MyHomePageState extends State<MyHomePage> {
   Widget buildUndoButton(bool transparent) {
     return !transparent
         ? const SizedBox()
-        :  Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: FloatingActionButton.small(
-                onPressed: () {
-                  undoDeletingStack.last.call();
-                  setState(() => undoDeletingStack.removeLast());
-                },
-                child: const Icon(Icons.undo),
-
+        : Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: FloatingActionButton.small(
+              onPressed: () {
+                undoDeletingStack.last.call();
+                setState(() => undoDeletingStack.removeLast());
+              },
+              child: const Icon(Icons.undo),
             ),
           );
   }
@@ -158,84 +159,96 @@ class MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: ColoredBox(color: Theme.of(context).colorScheme.background, child: Stack(
-          fit: StackFit.loose,
-          children: [
-            ListView(
-              children: [
-                const SizedBox(
-                  height: 52,
-                ),
-                MainScreen(
-                  controller: contentScreenshot,
-                  removeAdditionPaddings: true,
-                  displayedList: ItemController.currentList,
-                  onCloseList: () => setState(
-                    () => ItemController.currentList = null,
-                  ),
-                  onItemDelete: onItemDelete,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: topBarHeight + MediaQuery.of(context).padding.top,
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                  child: Container(
-                    color: Colors.transparent.withOpacity(0.1),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0 + MediaQuery.of(context).padding.top,
-              left: 0,
-              right: 14,
-              height: topBarHeight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+        body: ColoredBox(
+          color: Theme.of(context).colorScheme.background,
+          child: Stack(
+            fit: StackFit.loose,
+            children: [
+              ListView(
                 children: [
-                  IconButton(
-                    onPressed: () async {
-                      var status = await Permission.storage.status;
-                      if (status.isDenied) {
-                        await Permission.storage.request();
-                      }
-
-                      var screenshot = await contentScreenshot.capture();
-                      Directory tempDir = await getTemporaryDirectory();
-                      String tempPath = '${tempDir.path}/screen.jpeg';
-
-                      var file = await File(tempPath).writeAsBytes(screenshot!);
-                      await Share.shareXFiles([XFile(file.path)]);
-                    },
-                    icon: Icon(
-                      SpectrumIcons.export_image,
-                      color: useDarkTheme ? Colors.white :
-                          Theme.of(context).appBarTheme.titleTextStyle?.color,
-                    ),
+                  const SizedBox(
+                    height: 52,
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      await Share.share(
-                        formatList(
-                          ItemController.mainScreenValue,
-                          findBestSell(ItemController.mainScreenValue)!,
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      SpectrumIcons.export_textv1,
-                      color:
-                          useDarkTheme ? Colors.white : Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  MainScreen(
+                    controller: contentScreenshot,
+                    removeAdditionPaddings: true,
+                    displayedList: ItemController.currentList,
+                    onCloseList: () => setState(
+                      () => ItemController.currentList = null,
                     ),
+                    onItemDelete: onItemDelete,
                   ),
                 ],
               ),
-            )
-          ],
-        ),),
+              SizedBox(
+                height: topBarHeight + MediaQuery.of(context).padding.top,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    child: Container(
+                      color: Colors.transparent.withOpacity(0.1),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0 + MediaQuery.of(context).padding.top,
+                left: 0,
+                right: 14,
+                height: topBarHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        var status = await Permission.storage.status;
+                        if (status.isDenied) {
+                          await Permission.storage.request();
+                        }
+
+                        var screenshot = await contentScreenshot.capture();
+                        Directory tempDir = await getTemporaryDirectory();
+                        String tempPath = '${tempDir.path}/screen.jpeg';
+
+                        var file =
+                            await File(tempPath).writeAsBytes(screenshot!);
+                        await Share.shareXFiles([XFile(file.path)]);
+                      },
+                      icon: Icon(
+                        SpectrumIcons.export_image,
+                        color: useDarkTheme
+                            ? Colors.white
+                            : Theme.of(context)
+                                .appBarTheme
+                                .titleTextStyle
+                                ?.color,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await Share.share(
+                          formatList(
+                            ItemController.mainScreenValue,
+                            findBestSell(ItemController.mainScreenValue)!,
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        SpectrumIcons.export_textv1,
+                        color: useDarkTheme
+                            ? Colors.white
+                            : Theme.of(context)
+                                .appBarTheme
+                                .titleTextStyle
+                                ?.color,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

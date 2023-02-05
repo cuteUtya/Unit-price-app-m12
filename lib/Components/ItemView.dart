@@ -35,15 +35,11 @@ class ItemView extends StatelessWidget {
       required String value,
     }) {
       var headColor = meta.isBest
-          ? Color(palette?.primary.get(getToneOfColor(20) ?? 0))
-          : Color(palette?.neutral.get(getToneOfColor(20)) ??
-              Theme.of(context).textTheme.headlineMedium?.color?.value ??
-              0);
+          ? Color(palette.primary.get(getToneOfColor(20)))
+          : Color(palette.neutral.get(getToneOfColor(20)));
       var secondaryColor = meta.isBest
-          ? Color(palette?.primary.get(getToneOfColor(30 ?? 0)))
-          : Color(palette?.neutral.get(getToneOfColor(30)) ??
-              Theme.of(context).textTheme.headlineMedium?.color?.value ??
-              0);
+          ? Color(palette.primary.get(getToneOfColor(30)))
+          : Color(palette.neutral.get(getToneOfColor(30)));
 
       var fontStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: isHeadline ? headColor : secondaryColor,

@@ -127,8 +127,6 @@ class _MainScreenState extends State<MainScreen> {
                     )
                   ],
                 ),
-              /*Expanded(
-                  child:*/
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
