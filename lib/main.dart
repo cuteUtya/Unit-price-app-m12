@@ -215,26 +215,7 @@ class MyHomePageState extends State<MyHomePage> {
                         await Share.shareXFiles([XFile(file.path)]);
                       },
                       icon: Icon(
-                        SpectrumIcons.export_image,
-                        color: useDarkTheme
-                            ? Colors.white
-                            : Theme.of(context)
-                                .appBarTheme
-                                .titleTextStyle
-                                ?.color,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        await Share.share(
-                          formatList(
-                            ItemController.mainScreenValue,
-                            findBestSell(ItemController.mainScreenValue)!,
-                          ),
-                        );
-                      },
-                      icon: Icon(
-                        SpectrumIcons.export_textv1,
+                        Icons.ios_share,
                         color: useDarkTheme
                             ? Colors.white
                             : Theme.of(context)
