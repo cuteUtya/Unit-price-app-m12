@@ -1,16 +1,18 @@
-# unit_price
+# Unit price app with Material You Design
+App for determining the best unit price
+## [App was made to order for personal use and published with permission]
 
-A new Flutter project.
+* Dynamic themes support 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/61709763/233800658-63977906-9951-483d-a1bd-c0ee5ccf40c0.jpg" width="300" />
+  <img src="https://user-images.githubusercontent.com/61709763/233800662-26047d85-f7ab-4475-a891-158336343f6c.jpg" width="300" /> 
+</p>
 
-## Getting Started
+* Data share via text or photo 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/61709763/233800822-b42d582d-cccd-43ba-8af3-7eb5adba6f65.jpg" width="300" />
+  <img src="https://user-images.githubusercontent.com/61709763/233800824-78e50233-3222-45d3-aaae-4f6d5e124cb8.jpg" width="300" /> 
+</p>
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Other screens 
+<img src="https://user-images.githubusercontent.com/61709763/233800880-334bec55-95c7-4ba2-83fa-e21bf9bc97da.jpg" width="300"/>
