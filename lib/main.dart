@@ -303,7 +303,7 @@ class MyHomePageState extends State<MyHomePage> {
       result += newLine;
     }
 
-    return "```$result```";
+    return result;
   }
 
   void onItemDelete(Function prevent) {
