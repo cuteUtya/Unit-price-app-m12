@@ -19,6 +19,8 @@ import 'package:unit_price/ThemeController.dart';
 import 'package:unit_price/numberFormatter.dart';
 import 'package:unit_price/palette_controller.dart';
 
+import 'build_preferences.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ItemController.load();
@@ -199,6 +201,26 @@ class MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    textSharing ?
+                    IconButton(
+                      onPressed: () async {
+                        await Share.share(
+                          formatList(
+                            ItemController.mainScreenValue,
+                            findBestSell(ItemController.mainScreenValue)!,
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        SpectrumIcons.export_textv1,
+                        color: useDarkTheme
+                            ? Colors.white
+                            : Theme.of(context)
+                            .appBarTheme
+                            .titleTextStyle
+                            ?.color,
+                      ),
+                    ) : Container(),
                     IconButton(
                       onPressed: () async {
                         var status = await Permission.storage.status;
@@ -214,7 +236,7 @@ class MyHomePageState extends State<MyHomePage> {
                             await File(tempPath).writeAsBytes(screenshot!);
                         await Share.shareXFiles([XFile(file.path)]);
                       },
-                      icon: Icon(
+                      icon:  Icon(
                         Icons.ios_share,
                         color: useDarkTheme
                             ? Colors.white
