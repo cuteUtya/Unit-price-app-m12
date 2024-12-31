@@ -1,6 +1,6 @@
 # Unit price app with Material You Design
 App for determining the best unit price
-## [App was made to order for personal use and published with permission]
+## [I developed this app as a proof of concept for a client, and they allowed me to share it on]
 
 * Dynamic themes support 
 <p float="left">
