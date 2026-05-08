@@ -39,10 +39,10 @@ class NewListAlertState extends State<NewListAlert> {
     if (val.isEmpty) {
       setState(() => enterInvalid = true);
     } else {
-      if(widget.onDone != null) {
+      if (widget.onDone != null) {
         widget.onDone!(val);
       }
-      if(!widget.isEdit) {
+      if (!widget.isEdit) {
         ItemController.addList(name: val);
       }
       Navigator.of(context).pop();
@@ -52,7 +52,7 @@ class NewListAlertState extends State<NewListAlert> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.isEdit ?  'Rename' : 'New list'),
+      title: Text(widget.isEdit ? 'Перейменувати' : 'Новий список'),
       content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
@@ -61,8 +61,8 @@ class NewListAlertState extends State<NewListAlert> {
               onTap: () => setState(() => enterInvalid = false),
               controller: controller,
               decoration: InputDecoration(
-                labelText: widget.isEdit ? 'New name' : 'Name',
-                errorText: enterInvalid ? 'Name can\'t be empty' : null,
+                labelText: widget.isEdit ? 'Нове ім\'я' : 'Ім\'я',
+                errorText: enterInvalid ? 'Ім\'я не може бути пустим' : null,
                 border: const OutlineInputBorder(),
               ),
             )
@@ -71,13 +71,13 @@ class NewListAlertState extends State<NewListAlert> {
       ),
       actions: <Widget>[
         TextButton(
-          child: const Text('Cancel'),
+          child: const Text('Відмініти'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text(widget.isEdit ? 'Edit' : 'Add'),
+          child: Text(widget.isEdit ? 'Редагувати' : 'Додати'),
           onPressed: () {
             add();
           },

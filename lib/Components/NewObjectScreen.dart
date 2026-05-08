@@ -143,10 +143,10 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           onSubmitted: (_) =>
                               FocusScope.of(context).requestFocus(priceFocus),
                           decoration: InputDecoration(
-                            labelText: 'Вес',
+                            labelText: 'Вага',
                             border: const OutlineInputBorder(),
                             errorText: weightError
-                                ? (isUniqueError ? '' : 'Ошибка ввода')
+                                ? (isUniqueError ? '' : 'Помилка введення')
                                 : null,
                           ),
                         ),
@@ -159,12 +159,12 @@ class _NewObjectScreenState extends State<NewObjectScreen> {
                           onTap: () => clearError(),
                           focusNode: priceFocus,
                           decoration: InputDecoration(
-                            labelText: 'Цена',
+                            labelText: 'Ціна',
                             border: const OutlineInputBorder(),
                             errorText: priceError
                                 ? (isUniqueError
-                                    ? 'Уже в списке'
-                                    : 'Ошибка ввода')
+                                    ? 'Уже в списку'
+                                    : 'помилка введення')
                                 : null,
                           ),
                           onSubmitted: (_) => addValue(context),

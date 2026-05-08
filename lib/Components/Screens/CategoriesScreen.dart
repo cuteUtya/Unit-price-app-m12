@@ -36,7 +36,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     var index = lists.indexOf(i.item);
                     widget.onListDelete(() {
                       ItemController.addList(
-                        name: i.item.name ?? 'Name',
+                        name: i.item.name ?? 'Ім\'я',
                         items: i.item.items,
                         position: index,
                       );

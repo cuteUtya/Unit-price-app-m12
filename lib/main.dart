@@ -55,11 +55,15 @@ class AppState extends State<App> {
         var color = useDarkTheme ? darkColorScheme : lightColorScheme;
 
         var seedColor = const Color(0xff3279a8);
-        color ??= ColorScheme.fromSeed(seedColor: seedColor, brightness: useDarkTheme ? Brightness.dark : Brightness.light,);
-        if(lightColorScheme == null) PaletteController.set(color.primary.value);
+        color ??= ColorScheme.fromSeed(
+          seedColor: seedColor,
+          brightness: useDarkTheme ? Brightness.dark : Brightness.light,
+        );
+        if (lightColorScheme == null)
+          PaletteController.set(color.primary.value);
 
         return MaterialApp(
-          title: 'Unit price',
+          title: 'Рахуйчик',
           theme: ThemeData(
             colorScheme: color,
             useMaterial3: true,
@@ -201,26 +205,27 @@ class MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    textSharing ?
-                    IconButton(
-                      onPressed: () async {
-                        await Share.share(
-                          formatList(
-                            ItemController.mainScreenValue,
-                            findBestSell(ItemController.mainScreenValue)!,
-                          ),
-                        );
-                      },
-                      icon: Icon(
-                        SpectrumIcons.export_textv1,
-                        color: useDarkTheme
-                            ? Colors.white
-                            : Theme.of(context)
-                            .appBarTheme
-                            .titleTextStyle
-                            ?.color,
-                      ),
-                    ) : Container(),
+                    textSharing
+                        ? IconButton(
+                            onPressed: () async {
+                              await Share.share(
+                                formatList(
+                                  ItemController.mainScreenValue,
+                                  findBestSell(ItemController.mainScreenValue)!,
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              SpectrumIcons.export_textv1,
+                              color: useDarkTheme
+                                  ? Colors.white
+                                  : Theme.of(context)
+                                      .appBarTheme
+                                      .titleTextStyle
+                                      ?.color,
+                            ),
+                          )
+                        : Container(),
                     IconButton(
                       onPressed: () async {
                         var status = await Permission.storage.status;
@@ -236,7 +241,7 @@ class MyHomePageState extends State<MyHomePage> {
                             await File(tempPath).writeAsBytes(screenshot!);
                         await Share.shareXFiles([XFile(file.path)]);
                       },
-                      icon:  Icon(
+                      icon: Icon(
                         Icons.ios_share,
                         color: useDarkTheme
                             ? Colors.white
@@ -287,15 +292,15 @@ class MyHomePageState extends State<MyHomePage> {
       status += space(
           biggestStatus - status.length - (status.contains('👍') ? 1 : 0));
       newLine += status;
-      newLine += 'Цена/кг${space(2)}';
+      newLine += 'Ціна/кг${space(2)}';
       newLine += formatNumber(pPerK);
       newLine += "\n";
       newLine += " ".padRight(biggestStatus);
-      newLine += "Вес${space(6)}";
+      newLine += "Вага${space(6)}";
       newLine += formatNumber(i.weight!);
       newLine += "\n";
       newLine += "".padRight(biggestStatus);
-      newLine += "Цена${space(5)}";
+      newLine += "Ціна${space(5)}";
       newLine += formatNumber(i.price!);
       newLine += "\n";
       newLine += items.indexOf(i) + 1 == items.length ? '' : "\n";

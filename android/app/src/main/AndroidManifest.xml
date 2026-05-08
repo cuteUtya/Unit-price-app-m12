@@ -2,7 +2,7 @@
     package="com.example.unit_price">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
-        android:label="Unit price"
+        android:label="Рахуйчик"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
        <activity

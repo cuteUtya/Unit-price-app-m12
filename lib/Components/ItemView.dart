@@ -46,8 +46,9 @@ class ItemView extends StatelessWidget {
             fontWeight: isHeadline ? FontWeight.bold : null,
           );
 
-      var textBackColor = Color(palette?.primary.get(getToneOfColor(meta.isBest ? 70 : 90)) ??
-          Theme.of(context).colorScheme.primary.value);
+      var textBackColor = Color(
+          palette?.primary.get(getToneOfColor(meta.isBest ? 70 : 90)) ??
+              Theme.of(context).colorScheme.primary.value);
 
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 1),
@@ -85,7 +86,9 @@ class ItemView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: Color(palette?.tertiary.get(getToneOfColor(100)) ?? 0),
+                            color: Color(
+                                palette?.tertiary.get(getToneOfColor(100)) ??
+                                    0),
                           ),
                         ),
                       ))
@@ -111,8 +114,9 @@ class ItemView extends StatelessWidget {
       );
     }
 
-    var cardColor = Color(palette?.primary?.get(getToneOfColor(meta.isBest ? 80 : 95)) ??
-        Theme.of(context).colorScheme.surfaceVariant.value);
+    var cardColor = Color(
+        palette?.primary?.get(getToneOfColor(meta.isBest ? 80 : 95)) ??
+            Theme.of(context).colorScheme.surfaceVariant.value);
 
     return Dismissible(
       key: key,
@@ -122,7 +126,11 @@ class ItemView extends StatelessWidget {
         onTap: () => NewObjectScreen.show(
           context,
           onComplete: (d1, d2) => {
-            ItemController.replaceItem(oldItem: item, newItem: Item(weight: d1, price: d2), list: listName,)
+            ItemController.replaceItem(
+              oldItem: item,
+              newItem: Item(weight: d1, price: d2),
+              list: listName,
+            )
           },
           weight: item.weight,
           price: item.price,
@@ -132,20 +140,20 @@ class ItemView extends StatelessWidget {
           children: [
             buildLine(
               icon: SpectrumIcons.weight_kilogram,
-              name: "Цена за кг",
+              name: "Ціна за кг",
               isHeadline: true,
               badge: "${meta.percent - 100}%",
               value: formatNumber(meta.pricePerKilogram),
             ),
             buildLine(
               icon: SpectrumIcons.scale,
-              name: "Вес",
+              name: "Вага",
               isHeadline: false,
               value: formatNumber(item.weight!),
             ),
             buildLine(
               icon: Icons.price_change_rounded,
-              name: "Цена",
+              name: "Ціна",
               isHeadline: false,
               value: formatNumber(item.price!),
             ),
@@ -154,8 +162,6 @@ class ItemView extends StatelessWidget {
       ),
     );
   }
-
-
 }
 
 class ItemCalculationResult {

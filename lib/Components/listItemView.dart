@@ -46,7 +46,7 @@ class ListItemView extends StatelessWidget {
               ),
             ),
             Text(
-              "${item.items?.length} items",
+              "${item.items?.length} продуктів",
               style: textStyle,
             )
           ],
